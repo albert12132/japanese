@@ -1,13 +1,7 @@
 const express = require('express');
 const http = require('http');
 const path = require('path');
-const GoogleAuth = require('google-auth-library');
 const dao = require('./db.js');
-
-const CLIENT_ID = "758984664053-vfv9uik68cssqfn0s7m6sc60t8u0fon0.apps.googleusercontent.com";
-
-const auth = new GoogleAuth;
-const client = new auth.OAuth2(CLIENT_ID, '', '');
 
 const app = express();
 
@@ -16,7 +10,7 @@ const SECRET = process.env.SECRET || 'secret';
 
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
-app.use(express.static('static'));
+app.use(express.static(__dirname + '/static'));
 
 const db = new dao.Database();
 

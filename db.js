@@ -3,7 +3,14 @@ const { Pool } = require('pg');
 
 class PostGresDatabase {
   constructor() {
-    this.pool = new Pool();
+    if (process.env.DATABASE_URL) {
+      this.pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: true,
+      });
+    } else {
+      this.pool = new Pool();
+    }
     this.pool.on('error', (err, client) => {
       console.error('Unexpected error on idle PostGres client', err);
     });
