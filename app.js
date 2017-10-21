@@ -12,28 +12,31 @@ const client = new auth.OAuth2(CLIENT_ID, '', '');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+const SECRET = process.env.SECRET || 'secret';
+
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
 app.use(express.static('static'));
 
 const db = new dao.Database();
 
+app.all('/api/\*', function(req, res, next) {
+  if (req.body.phrase !== SECRET) {
+    res.status(403).send('Unauthorized');
+  } else {
+    next();
+  }
+});
+
 app.post('/api/login', function(req, res) {
-  const token = req.body.token;
-  client.verifyIdToken(
-      token,
-      CLIENT_ID,
-      function(e, login) {
-        var payload = login.getPayload();
-        var userid = payload['sub'];
-        console.log(userid);
-      });
+  console.log('Logged in!');
+  res.status(200).end();
 });
 
 /* Card resource */
 
 // Create card
-app.post('/api/cards', function(req, res) {
+app.post('/api/cards/create', function(req, res) {
   db.insertCard(req.body, (cardId) => {
     res.json({card_id: cardId});
   }, (err) => {
@@ -51,7 +54,7 @@ app.post('/api/cards/delete', function(req, res) {
 });
 
 // List all cards
-app.get('/api/cards', function(req, res) {
+app.post('/api/cards/list', function(req, res) {
   db.listCards((cards) => {
     res.json({cards: cards});
   }, (err) => {
