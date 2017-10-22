@@ -6,96 +6,167 @@ export default class Quiz extends React.Component {
     super(props);
     this.state = {
       cardIndex: 0,
-      incorrectAttempts: 0,
-    }
+      hiragana: "",
+      meaning: "",
+      incorrectHiragana: false,
+      incorrectMeaning: false,
+      disableGuess: false,
+    };
   }
 
-  setRandomCard() {
+  nextCard() {
     this.setState((prevState) => {
-      const nextIndex = prevState.cardIndex + 1;
+      let nextIndex = Math.floor(Math.random() * this.props.cards.length)
+      if (nextIndex === prevState.cardIndex) {
+        nextIndex = (nextIndex + 1) % this.props.cards.length
+      }
       return {
         cardIndex: nextIndex,
-        incorrectAttempts: 0,
+        hiragana: "",
+        meaning: "",
+        incorrectHiragana: false,
+        incorrectMeaning: false,
+        disableGuess: false,
       };
     });
   }
 
-  guess(hiragana, meaning) {
-    if (hiragana === this.props.cards[this.state.cardIndex].hiragana
-        && meaning === this.props.cards[this.state.cardIndex].meaning) {
-      this.setRandomCard();
-    } else {
+  onTextChange(field, text) {
+    const state = {
+      incorrectHiragana: false,
+      incorrectMeaning: false,
+    };
+    state[field] = text;
+    this.setState(state);
+  }
+
+  guess() {
+    const card = this.props.cards[this.state.cardIndex];
+    const incorrectHiragana = this.state.hiragana !== card.hiragana;
+    const incorrectMeaning = this.state.meaning !== card.meaning;
+    if (incorrectHiragana || incorrectMeaning) {
       this.setState((prevState) => {
         return {
-          incorrectAttempts: prevState.incorrectAttempts + 1,
+          incorrectHiragana: incorrectHiragana,
+          incorrectMeaning: incorrectMeaning,
         };
+      });
+    } else {
+      this.setState({
+        disableGuess: true,
       });
     }
   }
 
+  reveal() {
+    const card = this.props.cards[this.state.cardIndex];
+    this.setState({
+      hiragana: card.hiragana,
+      meaning: card.meaning,
+      incorrectHiragana: false,
+      incorrectMeaning: false,
+      disableGuess: true,
+    });
+  }
+
   render() {
-    if (this.state.cardIndex >= this.props.cards.length) {
-      return null;
-    }
+    const buttonType = this.state.incorrectHiragana || this.state.incorrectMeaning ? 'btn-danger' : 'btn-primary';
     return (
-      <div>
-        <CurrentWord
-          kanji={this.props.cards[this.state.cardIndex].kanji}
-          guess={(hiragana, meaning) => this.guess(hiragana, meaning)}
-          incorrectAttempts={this.state.incorrectAttempts}
-        />
+      <div className='container'>
         <div className='row justify-content-center'>
-          <button
-            className='btn btn-secondary'
-            onClick={() => this.setRandomCard()}>
-            Next card
-          </button>
+          <div>
+            <h1>{this.props.cards[this.state.cardIndex].kanji}</h1>
+          </div>
         </div>
+        <div className='form-group'>
+          <div className={this.state.incorrectHiragana ? 'has-danger' : ''}>
+            <div className='row justify-content-center'>
+              <label className='col-md-1 col-form-label'>Hiragana</label>
+              <div className='col-md-6'>
+                <input
+                  type='text'
+                  className='form-control'
+                  placeholder='hiragana'
+                  value={this.state.hiragana}
+                  onChange={(event) => this.onTextChange('hiragana', event.target.value)} />
+              </div>
+            </div>
+          </div>
+          <div className={this.state.incorrectMeaning ? 'has-danger' : ''}>
+            <div className='row justify-content-center'>
+              <label className='col-md-1 col-form-label'>Meaning</label>
+              <div className='col-md-6'>
+                <input
+                  type='text'
+                  className='form-control'
+                  placeholder='meaning'
+                  value={this.state.meaning}
+                  onChange={(event) => this.onTextChange('meaning', event.target.value)} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <GuessButtonGroup
+          guess={() => this.guess()}
+          reveal={() => this.reveal()}
+          guessButtonType={buttonType}
+          nextCard={() => this.nextCard()}
+          stopQuiz={this.props.stopQuiz}
+          disableGuess={this.state.disableGuess}
+        />
       </div>
     );
   }
 }
 
-class CurrentWord extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hiragana: "",
-      meaning: "",
-    };
-  }
-
-  onTextChange(field, text) {
-    const state = {};
-    state[field] = text;
-    this.setState(state);
-  }
-
-  render() {
+function GuessButtonGroup(props) {
+  if (props.disableGuess) {
     return (
       <div>
-        <div className='row form-inline'>
-          <span>{this.props.kanji}</span>
-          <input
-            type='text'
-            className='form-control'
-            placeholder='hiragana'
-            value={this.state.hiragana}
-            onChange={(event) => this.onTextChange('hiragana', event.target.value)} />
-          <input
-            type='text'
-            className='form-control'
-            placeholder='meaning'
-            value={this.state.meaning}
-            onChange={(event) => this.onTextChange('meaning', event.target.value)} />
+        <div className='row justify-content-center'>
           <button
-            className='btn btn-primary'
-            onClick={() =>
-              this.props.guess(this.state.hiragana, this.state.meaning)
-            } >Guess</button>
+            key='next-card'
+            className='col-md-6 btn btn-lg btn-success'
+            onClick={props.nextCard}>
+            Next card
+          </button>
         </div>
         <div className='row justify-content-center'>
-          Incorrect attempts: {this.props.incorrectAttempts}
+          <button
+            className='col-md-6 btn btn-lg btn-danger'
+            onClick={props.stopQuiz}>
+            Stop quiz
+          </button>
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <div className='row justify-content-center'>
+          <button
+            className={'col-md-2 col-10 btn btn-lg ' + props.guessButtonType}
+            onClick={props.guess}>
+            Guess
+          </button>
+          <button
+            className='col-md-2 col-5 btn btn-lg btn-secondary'
+            onClick={props.reveal}>
+            Reveal
+          </button>
+          <button
+            key='next-card'
+            className='col-md-2 col-5 btn btn-lg btn-secondary'
+            onClick={props.nextCard}>
+            Next card
+          </button>
+        </div>
+        <div className='row justify-content-center'>
+          <button
+            className='col-md-6 col-10 btn btn-lg btn-danger'
+            onClick={props.stopQuiz}>
+            Stop quiz
+          </button>
         </div>
       </div>
     );

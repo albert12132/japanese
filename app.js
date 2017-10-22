@@ -6,7 +6,7 @@ const dao = require('./db.js');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const SECRET = process.env.SECRET || 'secret';
+const SECRET = process.env.SECRET || '';
 
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
@@ -23,7 +23,6 @@ app.all('/api/\*', function(req, res, next) {
 });
 
 app.post('/api/login', function(req, res) {
-  console.log('Logged in!');
   res.status(200).end();
 });
 

@@ -22,7 +22,6 @@ module.exports = {
         exclude: /node_modules/,
         loader: "babel-loader"
       },
-      /*
       {
         test: /\.css$/,
         use: [
@@ -30,7 +29,6 @@ module.exports = {
           'css-loader'
         ]
       },
-      */
     ]
   }
 };

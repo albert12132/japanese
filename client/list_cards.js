@@ -12,35 +12,27 @@ export default function ListCards(props) {
     );
   });
   return (
-    <table className='table table-hover'>
-      <thead>
-        <tr>
-          <th>Kanji</th>
-          <th>Hiragana</th>
-          <th>Meaning</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows}
-      </tbody>
-    </table>
+    <div className='row'>
+      {rows}
+    </div>
   );
 }
 
 function CardSummary(props) {
   return (
-    <tr>
-      <td>{props.card.kanji}</td>
-      <td>{props.card.hiragana}</td>
-      <td>{props.card.meaning}</td>
-      <td>
-        <button
-          className='btn btn-danger'
-          onClick={() => props.deleteCard(props.card.card_id)}>
-          Delete
-        </button>
-      </td>
-    </tr>
+    <div className='col'>
+      <div className='card'>
+        <div className='card-body text-nowrap'>
+          <h4 className='card-title'>{props.card.kanji}</h4>
+          <h6 className='card-subtitle'>{props.card.hiragana}</h6>
+          <p className='card-text'>{props.card.meaning}</p>
+          <button
+            className='btn btn-danger'
+            onClick={() => props.deleteCard(props.card.card_id)}>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,14 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { GoogleLogin } from 'react-google-login';
-import $ from 'jquery';
 import { OrderedMap } from 'immutable';
 
-import CreateCard from './create_card.js';
-import ListCards from './list_cards.js';
+import Auth from './auth.js';
+import Review from './review.js';
 import Quiz from './quiz.js';
 import AppClient from './client.js';
-import Auth from './auth.js';
+import './style.css';
 
 class App extends React.Component {
   constructor(props) {
@@ -19,6 +17,11 @@ class App extends React.Component {
       quizEnabled: false,
     }
     this.client = new AppClient();
+
+    this.addNewCard = this.addNewCard.bind(this);
+    this.deleteCard = this.deleteCard.bind(this);
+    this.verifyLogin = this.verifyLogin.bind(this);
+    this.setQuizEnabled = this.setQuizEnabled.bind(this);
   }
 
   addNewCard(kanji, hiragana, meaning) {
@@ -67,39 +70,19 @@ class App extends React.Component {
       );
     } else if (this.state.quizEnabled) {
       return (
-        <div>
-          <Quiz
-            cards={this.state.cards.toArray()}
-          />
-          <div className='row justify-content-center'>
-            <button
-              className='btn btn-danger'
-              onClick={() => this.setQuizEnabled(false)} >Stop quiz</button>
-          </div>
-        </div>
+        <Quiz
+          cards={this.state.cards.toArray()}
+          stopQuiz={() => this.setQuizEnabled(false)}
+        />
       );
     } else {
       return (
-        <div>
-          <div className='row justify-content-center'>
-            <CreateCard
-              addNewCard={(kanji, hiragana, meaning) => this.addNewCard(kanji, hiragana, meaning)}
-            />
-          </div>
-          <div className='row justify-content-center'>
-            <button
-              className='btn btn-primary'
-              onClick={() => this.setQuizEnabled(true)} >
-              Start quiz
-            </button>
-          </div>
-          <div className='row justify-content-center'>
-            <ListCards
-              cards={this.state.cards.toArray()}
-              deleteCard={(card_id) => this.deleteCard(card_id)}
-            />
-          </div>
-        </div>
+        <Review
+          addNewCard={this.addNewCard}
+          setQuizEnabled={this.setQuizEnabled}
+          deleteCard={this.deleteCard}
+          cards={this.state.cards.toArray()}
+        />
       );
     }
   }
