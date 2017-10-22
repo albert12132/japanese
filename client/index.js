@@ -7,6 +7,7 @@ import Review from './review.js';
 import Quiz from './quiz.js';
 import AppClient from './client.js';
 import './style.css';
+import 'bootstrap';
 
 class App extends React.Component {
   constructor(props) {
@@ -19,15 +20,28 @@ class App extends React.Component {
     this.client = new AppClient();
 
     this.addNewCard = this.addNewCard.bind(this);
+    this.updateCard = this.updateCard.bind(this);
     this.deleteCard = this.deleteCard.bind(this);
     this.verifyLogin = this.verifyLogin.bind(this);
     this.setQuizEnabled = this.setQuizEnabled.bind(this);
   }
 
-  addNewCard(kanji, hiragana, meaning) {
+  addNewCard(card) {
     this.client.addNewCard(
-      kanji, hiragana, meaning,
+      card,
       (card) => {
+        this.setState((prevState) => {
+          return {
+            cards: prevState.cards.set(card.card_id, card),
+          };
+        });
+      });
+  }
+
+  updateCard(card) {
+    this.client.updateCard(
+      card,
+      () => {
         this.setState((prevState) => {
           return {
             cards: prevState.cards.set(card.card_id, card),
@@ -80,6 +94,7 @@ class App extends React.Component {
         <Review
           addNewCard={this.addNewCard}
           setQuizEnabled={this.setQuizEnabled}
+          updateCard={this.updateCard}
           deleteCard={this.deleteCard}
           cards={this.state.cards.toArray()}
         />

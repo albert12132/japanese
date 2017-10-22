@@ -30,12 +30,23 @@ app.post('/api/login', function(req, res) {
 
 // Create card
 app.post('/api/cards/create', function(req, res) {
-  db.insertCard(req.body, (cardId) => {
+  db.insertCard(req.body.card, (cardId) => {
     res.json({card_id: cardId});
   }, (err) => {
     res.status(400).send(err);
   });
 });
+
+// Update card
+app.post('/api/cards/update', function(req, res) {
+    console.log(req);
+  db.updateCard(req.body.card, () => {
+    res.end();
+  }, (err) => {
+    res.status(400).send(err);
+  });
+});
+
 
 // Delete card
 app.post('/api/cards/delete', function(req, res) {

@@ -1,5 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {
+  Button,
+  Col,
+  Container,
+  Row,
+} from 'reactstrap';
 
 export default class Auth extends React.Component {
   constructor(props) {
@@ -8,6 +14,8 @@ export default class Auth extends React.Component {
       phrase: '',
       verificationFailed: false,
     };
+
+    this.responseGoogle = this.responseGoogle.bind(this);
   }
 
   onPhraseChange(text) {
@@ -21,6 +29,10 @@ export default class Auth extends React.Component {
     this.setState({
       verificationFailed: true,
     });
+  }
+
+  responseGoogle(response) {
+    console.log(response);
   }
 
   render() {
@@ -38,32 +50,30 @@ export default class Auth extends React.Component {
       );
     }
     return (
-      <div className='auth'>
-        <div className='container'>
-          <div className='row justify-content-center'>
-            <div className='col-md-6'>
-              <div className='input-group input-group-lg'>
-                <input
-                  type='text'
-                  className='form-control'
-                  placeholder='phrase'
-                  value={this.state.phrase}
-                  onChange={(event) => this.onPhraseChange(event.target.value)} />
-                <span className='input-group-btn'>
-                  <button
-                    className={'btn ' + buttonType}
-                    onClick={() =>
-                        this.props.verify(this.state.phrase, () => {
-                          this.onVerificationFailed();
-                        })
-                    } >Verify</button>
-                </span>
-              </div>
+      <Container>
+        <Row className='justify-content-center'>
+          <Col md='6'>
+            <div className='input-group input-group-lg'>
+              <input
+                type='text'
+                className='form-control'
+                placeholder='phrase'
+                value={this.state.phrase}
+                onChange={(event) => this.onPhraseChange(event.target.value)} />
+              <span className='input-group-btn'>
+                <button
+                  className={'btn ' + buttonType}
+                  onClick={() =>
+                      this.props.verify(this.state.phrase, () => {
+                        this.onVerificationFailed();
+                      })
+                  } >Verify</button>
+              </span>
             </div>
-          </div>
-          {failBanner}
-        </div>
-      </div>
+          </Col>
+        </Row>
+        {failBanner}
+      </Container>
     );
   }
 }

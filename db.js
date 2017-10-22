@@ -46,6 +46,37 @@ class PostGresDatabase {
     });
   }
 
+  updateCard(card, success, failure) {
+    if (!card.card_id) {
+      failure('Invalid card: missing card_id field');
+    } else if (!card.kanji) {
+      failure('Invalid card: missing kanji field');
+    } else if (!card.hiragana) {
+      failure('Invalid card: missing hiragana field');
+    } else if (!card.meaning) {
+      failure('Invalid card: missing meaning field');
+    }
+
+    this.pool.connect((err, client, done) => {
+      if (err) {
+        failure(err);
+        return;
+      }
+
+      client.query(
+        'UPDATE Cards SET kanji = $1, hiragana = $2, meaning = $3 WHERE card_id = $4',
+        [card.kanji, card.hiragana, card.meaning, card.card_id],
+        (err) => {
+          done();
+          if (err) {
+            failure(err);
+          } else {
+            success();
+          }
+        });
+    });
+  }
+
   deleteCard(cardId, success, failure) {
     this.pool.connect((err, client, done) => {
       if (err) {

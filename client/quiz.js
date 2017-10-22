@@ -1,5 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {
+  Button,
+  Col,
+  Container,
+  Input,
+  Label,
+  FormGroup,
+  Row,
+} from 'reactstrap';
 
 export default class Quiz extends React.Component {
   constructor(props) {
@@ -70,42 +79,38 @@ export default class Quiz extends React.Component {
   }
 
   render() {
-    const buttonType = this.state.incorrectHiragana || this.state.incorrectMeaning ? 'btn-danger' : 'btn-primary';
+    const buttonType = this.state.incorrectHiragana || this.state.incorrectMeaning ? 'danger' : 'primary';
     return (
-      <div className='container'>
-        <div className='row justify-content-center'>
+      <Container>
+        <Row className='justify-content-center'>
           <div>
             <h1>{this.props.cards[this.state.cardIndex].kanji}</h1>
           </div>
-        </div>
-        <div className='form-group'>
+        </Row>
+        <FormGroup>
           <div className={this.state.incorrectHiragana ? 'has-danger' : ''}>
-            <div className='row justify-content-center'>
-              <label className='col-md-1 col-form-label'>Hiragana</label>
-              <div className='col-md-6'>
-                <input
-                  type='text'
-                  className='form-control'
+            <Row className='justify-content-center'>
+              <Label md='1'>Hiragana</Label>
+              <Col md='6'>
+                <Input
                   placeholder='hiragana'
                   value={this.state.hiragana}
                   onChange={(event) => this.onTextChange('hiragana', event.target.value)} />
-              </div>
-            </div>
+              </Col>
+            </Row>
           </div>
           <div className={this.state.incorrectMeaning ? 'has-danger' : ''}>
-            <div className='row justify-content-center'>
-              <label className='col-md-1 col-form-label'>Meaning</label>
-              <div className='col-md-6'>
-                <input
-                  type='text'
-                  className='form-control'
+            <Row className='justify-content-center'>
+              <Label md='1'>Meaning</Label>
+              <Col md='6'>
+                <Input
                   placeholder='meaning'
                   value={this.state.meaning}
                   onChange={(event) => this.onTextChange('meaning', event.target.value)} />
-              </div>
-            </div>
+              </Col>
+            </Row>
           </div>
-        </div>
+        </FormGroup>
         <GuessButtonGroup
           guess={() => this.guess()}
           reveal={() => this.reveal()}
@@ -114,7 +119,7 @@ export default class Quiz extends React.Component {
           stopQuiz={this.props.stopQuiz}
           disableGuess={this.state.disableGuess}
         />
-      </div>
+      </Container>
     );
   }
 }
@@ -123,51 +128,63 @@ function GuessButtonGroup(props) {
   if (props.disableGuess) {
     return (
       <div>
-        <div className='row justify-content-center'>
-          <button
-            key='next-card'
-            className='col-md-6 btn btn-lg btn-success'
+        <Row className='justify-content-center'>
+          <Button
+            key='top-middle-btn'
+            className='col-md-6 col-10'
+            size='lg'
+            color='success'
             onClick={props.nextCard}>
             Next card
-          </button>
-        </div>
-        <div className='row justify-content-center'>
-          <button
-            className='col-md-6 btn btn-lg btn-danger'
+          </Button>
+        </Row>
+        <Row className='justify-content-center'>
+          <Button
+            className='col-md-6 col-10'
+            size='lg'
+            color='danger'
             onClick={props.stopQuiz}>
             Stop quiz
-          </button>
-        </div>
+          </Button>
+        </Row>
       </div>
     );
   } else {
     return (
       <div>
-        <div className='row justify-content-center'>
-          <button
-            className={'col-md-2 col-10 btn btn-lg ' + props.guessButtonType}
+        <Row className='justify-content-center'>
+          <Button
+            className='col-md-2 col-10'
+            size='lg'
+            color={props.guessButtonType}
             onClick={props.guess}>
             Guess
-          </button>
-          <button
-            className='col-md-2 col-5 btn btn-lg btn-secondary'
+          </Button>
+          <Button
+            key='top-middle-btn'
+            className='col-md-2 col-5'
+            size='lg'
+            color='secondary'
             onClick={props.reveal}>
             Reveal
-          </button>
-          <button
-            key='next-card'
-            className='col-md-2 col-5 btn btn-lg btn-secondary'
+          </Button>
+          <Button
+            className='col-md-2 col-5'
+            size='lg'
+            color='secondary'
             onClick={props.nextCard}>
             Next card
-          </button>
-        </div>
-        <div className='row justify-content-center'>
-          <button
-            className='col-md-6 col-10 btn btn-lg btn-danger'
+          </Button>
+        </Row>
+        <Row className='justify-content-center'>
+          <Button
+            className='col-md-6 col-10'
+            size='lg'
+            color='danger'
             onClick={props.stopQuiz}>
             Stop quiz
-          </button>
-        </div>
+          </Button>
+        </Row>
       </div>
     );
   }

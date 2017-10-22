@@ -13,7 +13,6 @@ export default class AppClient {
       success();
     })
     .fail(failure);
-
   }
 
   loadCards(success) {
@@ -28,20 +27,36 @@ export default class AppClient {
     });
   }
 
-  addNewCard(kanji, hiragana, meaning, success) {
+  addNewCard(card, success) {
     $.post('/api/cards/create', {
-      kanji: kanji,
-      hiragana: hiragana,
-      meaning: meaning,
+      card: {
+        kanji: card.kanji,
+        hiragana: card.hiragana,
+        meaning: card.meaning,
+      },
       phrase: this.phrase,
     }, (response) => {
-      const card = {
+      const newCard = {
         card_id: response.card_id,
-        kanji: kanji,
-        hiragana: hiragana,
-        meaning: meaning,
+        kanji: card.kanji,
+        hiragana: card.hiragana,
+        meaning: card.meaning,
       };
-      success(card);
+      success(newCard);
+    });
+  }
+
+  updateCard(card, success) {
+    $.post('/api/cards/update', {
+      card: {
+        card_id: card.card_id,
+        kanji: card.kanji,
+        hiragana: card.hiragana,
+        meaning: card.meaning,
+      },
+      phrase: this.phrase,
+    }, () => {
+      success();
     });
   }
 

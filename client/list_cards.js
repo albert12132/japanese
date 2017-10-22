@@ -1,38 +1,100 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardSubtitle,
+  CardText,
+  CardTitle,
+  Col,
+  Container,
+  Row,
+} from 'reactstrap';
+import EditCardModal from './edit_card.js';
 
-export default function ListCards(props) {
-  const rows = props.cards.map((card) => {
+export default class ListCards extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showModalWithCard: null,
+    };
+    this.showModal = this.showModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+  }
+
+  showModal(card) {
+    this.setState({
+      showModalWithCard: card,
+    });
+  }
+
+  closeModal() {
+    this.setState({
+      showModalWithCard: null,
+    });
+  }
+
+  // Todo: send update to server, and update the in-memory
+  // list. need a way to propgate the existing card into
+  // the modal.
+
+  render() {
+    const rows = this.props.cards.map((card) => {
+      return (
+        <CardSummary
+          key={card.card_id}
+          card={card}
+          deleteCard={this.props.deleteCard}
+          editCard={this.showModal}
+        />
+      );
+    });
+
+    let modal = null;
+    if (this.state.showModalWithCard !== null) {
+      modal =
+        <EditCardModal
+          modal={true}
+          initialCard={this.state.showModalWithCard}
+          saveCard={this.props.updateCard}
+          close={this.closeModal}
+        />
+    }
     return (
-      <CardSummary
-        key={card.card_id}
-        card={card}
-        deleteCard={props.deleteCard}
-      />
+      <div>
+        <Row>
+          {rows}
+        </Row>
+        {modal}
+      </div>
     );
-  });
-  return (
-    <div className='row'>
-      {rows}
-    </div>
-  );
+  }
 }
 
 function CardSummary(props) {
   return (
-    <div className='col'>
-      <div className='card'>
-        <div className='card-body text-nowrap'>
-          <h4 className='card-title'>{props.card.kanji}</h4>
-          <h6 className='card-subtitle'>{props.card.hiragana}</h6>
-          <p className='card-text'>{props.card.meaning}</p>
+    <Col>
+      <Card>
+        <CardBody className='text-nowrap'>
+          <CardTitle>{props.card.kanji}</CardTitle>
+          <CardSubtitle>{props.card.hiragana}</CardSubtitle>
+          <CardText>{props.card.meaning}</CardText>
           <button
-            className='btn btn-danger'
+            className='close'
+            type='button'
             onClick={() => props.deleteCard(props.card.card_id)}>
-            Delete
+            &times;
           </button>
-        </div>
-      </div>
-    </div>
+          <button
+            className='close'
+            style={{float: 'left'}}
+            type='button'
+            onClick={() => props.editCard(props.card)}>
+            &#x270e;
+          </button>
+        </CardBody>
+      </Card>
+    </Col>
   );
 }
