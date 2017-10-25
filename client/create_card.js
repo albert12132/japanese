@@ -38,6 +38,7 @@ export default class CreateCard extends React.Component {
         </Col>
         <EditCardModal
           initialCard={{}}
+          tags={this.props.tags}
           modal={this.state.modal}
           close={this.toggle}
           saveCard={this.props.addNewCard}

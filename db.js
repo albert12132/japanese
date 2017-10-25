@@ -33,8 +33,8 @@ class PostGresDatabase {
 
       const cardId = uuid();
       client.query(
-        'INSERT INTO Cards VALUES ($1, $2, $3, $4)',
-        [cardId, card.kanji, card.hiragana, card.meaning],
+        'INSERT INTO Cards VALUES ($1, $2, $3, $4, $5)',
+        [cardId, card.kanji, card.hiragana, card.meaning, card.tags || []],
         (err) => {
           done();
           if (err) {
@@ -63,9 +63,18 @@ class PostGresDatabase {
         return;
       }
 
+      let query;
+      let values;
+      if (card.tags) {
+        query = 'UPDATE Cards SET kanji = $2, hiragana = $3, meaning = $4, tags = $5 WHERE card_id = $1';
+        values = [card.card_id, card.kanji, card.hiragana, card.meaning, card.tags];
+      } else {
+        query = 'UPDATE Cards SET kanji = $2, hiragana = $3, meaning = $4 WHERE card_id = $1';
+        values = [card.card_id, card.kanji, card.hiragana, card.meaning];
+      }
       client.query(
-        'UPDATE Cards SET kanji = $1, hiragana = $2, meaning = $3 WHERE card_id = $4',
-        [card.kanji, card.hiragana, card.meaning, card.card_id],
+        query,
+        values,
         (err) => {
           done();
           if (err) {

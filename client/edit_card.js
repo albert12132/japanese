@@ -1,5 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
+import { OrderedSet } from 'immutable';
 import {
   Button,
   Col,
@@ -22,6 +25,7 @@ export default class EditCardModal extends React.Component {
       kanji: this.props.initialCard.kanji || '',
       hiragana: this.props.initialCard.hiragana || '',
       meaning: this.props.initialCard.meaning || '',
+      tags: this.props.initialCard.tags || [],
       saveFailed: false,
     };
 
@@ -44,16 +48,13 @@ export default class EditCardModal extends React.Component {
       this.setState({
         saveFailed: true,
       });
-    } else if (this.state.kanji === this.props.initialCard.kanji
-        && this.state.hiragana === this.props.initialCard.hiragana
-        && this.state.meaning === this.props.initialCard.meaning) {
-      this.close();
     } else {
       this.props.saveCard({
         card_id: this.state.card_id,
         kanji: this.state.kanji,
         hiragana: this.state.hiragana,
         meaning: this.state.meaning,
+        tags: this.state.tags.map((select) => select.value),
       });
       this.close();
     }
@@ -65,6 +66,7 @@ export default class EditCardModal extends React.Component {
       hiragana: '',
       meaning: '',
       saveFailed: false,
+      tags: [],
     });
     this.props.close();
   }
@@ -111,6 +113,26 @@ export default class EditCardModal extends React.Component {
                 onChange={(event) => this.onTextChange('meaning', event.target.value)} />
             </Col>
           </FormGroup>
+          <Row>
+            <Col>
+              Tags
+              <Select.Creatable
+                multi={true}
+                value={this.state.tags}
+                options={this.props.tags.toArray().map(tag => {
+                  return {
+                    value: tag,
+                    label: tag,
+                  }
+                })}
+                onChange={(newTags) => {
+                  this.setState({
+                    tags: newTags,
+                  });
+                }}
+              />
+              </Col>
+          </Row>
         </ModalBody>
 
         <ModalFooter>

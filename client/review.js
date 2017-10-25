@@ -24,9 +24,13 @@ export default function Review(props) {
           </Button>
         </Col>
       </Row>
-      <CreateCard addNewCard={props.addNewCard} />
+      <CreateCard
+        addNewCard={props.addNewCard}
+        tags={props.tags}
+      />
       <ListCards
         cards={props.cards}
+        tags={props.tags}
         updateCard={props.updateCard}
         deleteCard={props.deleteCard}
       />

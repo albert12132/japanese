@@ -1,5 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Select from 'react-select';
+import { Set } from 'immutable';
+import 'react-select/dist/react-select.css';
 import {
   Button,
   Col,
@@ -20,14 +23,18 @@ export default class Quiz extends React.Component {
       incorrectHiragana: false,
       incorrectMeaning: false,
       disableGuess: false,
+      cards: this.props.cards.slice(),
+      tagsToFilter: [],
     };
+
+    this.updateTagFilter = this.updateTagFilter.bind(this);
   }
 
   nextCard() {
     this.setState((prevState) => {
-      let nextIndex = Math.floor(Math.random() * this.props.cards.length)
+      let nextIndex = Math.floor(Math.random() * prevState.cards.length)
       if (nextIndex === prevState.cardIndex) {
-        nextIndex = (nextIndex + 1) % this.props.cards.length
+        nextIndex = (nextIndex + 1) % prevState.cards.length
       }
       return {
         cardIndex: nextIndex,
@@ -50,7 +57,7 @@ export default class Quiz extends React.Component {
   }
 
   guess() {
-    const card = this.props.cards[this.state.cardIndex];
+    const card = this.state.cards[this.state.cardIndex];
     const incorrectHiragana = this.state.hiragana !== card.hiragana;
     const incorrectMeaning = this.state.meaning !== card.meaning;
     if (incorrectHiragana || incorrectMeaning) {
@@ -68,7 +75,7 @@ export default class Quiz extends React.Component {
   }
 
   reveal() {
-    const card = this.props.cards[this.state.cardIndex];
+    const card = this.state.cards[this.state.cardIndex];
     this.setState({
       hiragana: card.hiragana,
       meaning: card.meaning,
@@ -78,22 +85,58 @@ export default class Quiz extends React.Component {
     });
   }
 
+  updateTagFilter(newTags) {
+    if (newTags.length > 0) {
+      const newTagsSet = new Set(newTags).map(tag => tag.value);
+      const newCards = this.props.cards.filter(card => newTagsSet.isSubset(card.tags));
+      this.setState({
+        tagsToFilter: newTags,
+        cards: newCards,
+      });
+    } else {
+      this.setState({
+        tagsToFilter: newTags,
+        cards: this.props.cards.slice(),
+      });
+    }
+    // Skip to the next card.
+    this.nextCard();
+  }
+
   render() {
     const buttonType = this.state.incorrectHiragana || this.state.incorrectMeaning ? 'danger' : 'primary';
     return (
       <Container>
         <Row className='justify-content-center'>
+          <Col md='7'>
+            Filter tags
+            <Select
+              multi={true}
+              value={this.state.tagsToFilter}
+              options={this.props.tags.toArray().map(tag => {
+                return {
+                  value: tag,
+                  label: tag,
+                }
+              })}
+              onChange={this.updateTagFilter}
+            />
+            <hr/>
+          </Col>
+        </Row>
+
+        <Row className='justify-content-center'>
           <div>
-            <h1>{this.props.cards[this.state.cardIndex].kanji}</h1>
+            <h1>{this.state.cards[this.state.cardIndex].kanji}</h1>
           </div>
         </Row>
+
         <FormGroup>
           <div className={this.state.incorrectHiragana ? 'has-danger' : ''}>
             <Row className='justify-content-center'>
               <Label md='1'>Hiragana</Label>
               <Col md='6'>
                 <Input
-                  placeholder='hiragana'
                   value={this.state.hiragana}
                   onChange={(event) => this.onTextChange('hiragana', event.target.value)} />
               </Col>
@@ -104,13 +147,13 @@ export default class Quiz extends React.Component {
               <Label md='1'>Meaning</Label>
               <Col md='6'>
                 <Input
-                  placeholder='meaning'
                   value={this.state.meaning}
                   onChange={(event) => this.onTextChange('meaning', event.target.value)} />
               </Col>
             </Row>
           </div>
         </FormGroup>
+
         <GuessButtonGroup
           guess={() => this.guess()}
           reveal={() => this.reveal()}

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { OrderedMap } from 'immutable';
+import { OrderedMap, Set } from 'immutable';
 
 import Auth from './auth.js';
 import Review from './review.js';
@@ -15,6 +15,7 @@ class App extends React.Component {
     this.state = {
       verified: false,
       cards: new OrderedMap(),
+      tags: new Set(),
       quizEnabled: false,
     }
     this.client = new AppClient();
@@ -33,6 +34,7 @@ class App extends React.Component {
         this.setState((prevState) => {
           return {
             cards: prevState.cards.set(card.card_id, card),
+            tags: prevState.tags.union(card.tags),
           };
         });
       });
@@ -45,6 +47,7 @@ class App extends React.Component {
         this.setState((prevState) => {
           return {
             cards: prevState.cards.set(card.card_id, card),
+            tags: prevState.tags.union(card.tags),
           };
         });
       });
@@ -63,9 +66,11 @@ class App extends React.Component {
   verifyLogin(phrase, failure) {
     this.client.verifyLogin(phrase, () => {
       this.client.loadCards((cards) => {
+        const cardMap = new OrderedMap(cards);
         this.setState({
           verified: true,
-          cards: new OrderedMap(cards)
+          cards: cardMap,
+          tags: cardMap.toSet().flatMap((card) => card.tags),
         });
       });
     }, failure);
@@ -86,6 +91,7 @@ class App extends React.Component {
       return (
         <Quiz
           cards={this.state.cards.toArray()}
+          tags={this.state.tags}
           stopQuiz={() => this.setQuizEnabled(false)}
         />
       );
@@ -97,6 +103,7 @@ class App extends React.Component {
           updateCard={this.updateCard}
           deleteCard={this.deleteCard}
           cards={this.state.cards.toArray()}
+          tags={this.state.tags}
         />
       );
     }

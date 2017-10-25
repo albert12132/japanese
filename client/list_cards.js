@@ -35,10 +35,6 @@ export default class ListCards extends React.Component {
     });
   }
 
-  // Todo: send update to server, and update the in-memory
-  // list. need a way to propgate the existing card into
-  // the modal.
-
   render() {
     const rows = this.props.cards.map((card) => {
       return (
@@ -57,6 +53,7 @@ export default class ListCards extends React.Component {
         <EditCardModal
           modal={true}
           initialCard={this.state.showModalWithCard}
+          tags={this.props.tags}
           saveCard={this.props.updateCard}
           close={this.closeModal}
         />

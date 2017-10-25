@@ -33,6 +33,7 @@ export default class AppClient {
         kanji: card.kanji,
         hiragana: card.hiragana,
         meaning: card.meaning,
+        tags: card.tags,
       },
       phrase: this.phrase,
     }, (response) => {
@@ -41,6 +42,7 @@ export default class AppClient {
         kanji: card.kanji,
         hiragana: card.hiragana,
         meaning: card.meaning,
+        tags: card.tags
       };
       success(newCard);
     });
@@ -48,12 +50,7 @@ export default class AppClient {
 
   updateCard(card, success) {
     $.post('/api/cards/update', {
-      card: {
-        card_id: card.card_id,
-        kanji: card.kanji,
-        hiragana: card.hiragana,
-        meaning: card.meaning,
-      },
+      card: card,
       phrase: this.phrase,
     }, () => {
       success();

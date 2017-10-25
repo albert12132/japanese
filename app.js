@@ -39,7 +39,6 @@ app.post('/api/cards/create', function(req, res) {
 
 // Update card
 app.post('/api/cards/update', function(req, res) {
-    console.log(req);
   db.updateCard(req.body.card, () => {
     res.end();
   }, (err) => {
