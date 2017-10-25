@@ -32,9 +32,12 @@ export default class Quiz extends React.Component {
 
   nextCard() {
     this.setState((prevState) => {
-      let nextIndex = Math.floor(Math.random() * prevState.cards.length)
-      if (nextIndex === prevState.cardIndex) {
-        nextIndex = (nextIndex + 1) % prevState.cards.length
+      let nextIndex = 0;
+      if (prevState.cards.length > 0) {
+        let nextIndex = Math.floor(Math.random() * prevState.cards.length)
+        if (nextIndex === prevState.cardIndex) {
+          nextIndex = (nextIndex + 1) % prevState.cards.length
+        }
       }
       return {
         cardIndex: nextIndex,
@@ -57,6 +60,10 @@ export default class Quiz extends React.Component {
   }
 
   guess() {
+    if (this.state.cards.length === 0) {
+      return;
+    }
+
     const card = this.state.cards[this.state.cardIndex];
     const incorrectHiragana = this.state.hiragana !== card.hiragana;
     const incorrectMeaning = this.state.meaning !== card.meaning;
@@ -75,6 +82,10 @@ export default class Quiz extends React.Component {
   }
 
   reveal() {
+    if (this.state.cards.length === 0) {
+      return;
+    }
+
     const card = this.state.cards[this.state.cardIndex];
     this.setState({
       hiragana: card.hiragana,
@@ -127,7 +138,9 @@ export default class Quiz extends React.Component {
 
         <Row className='justify-content-center'>
           <div>
-            <h1>{this.state.cards[this.state.cardIndex].kanji}</h1>
+            <h1>{this.state.cardIndex >= this.state.cards.length
+                ?  'No results'
+                : this.state.cards[this.state.cardIndex].kanji}</h1>
           </div>
         </Row>
 
