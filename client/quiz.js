@@ -34,7 +34,7 @@ export default class Quiz extends React.Component {
     this.setState((prevState) => {
       let nextIndex = 0;
       if (prevState.cards.length > 0) {
-        let nextIndex = Math.floor(Math.random() * prevState.cards.length)
+        nextIndex = Math.floor(Math.random() * prevState.cards.length)
         if (nextIndex === prevState.cardIndex) {
           nextIndex = (nextIndex + 1) % prevState.cards.length
         }
