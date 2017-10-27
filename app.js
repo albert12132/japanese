@@ -1,29 +1,58 @@
 const express = require('express');
 const http = require('http');
-const path = require('path');
+const cookieSession = require('cookie-session');
+const GoogleAuth = require('google-auth-library');
 const dao = require('./db.js');
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 const SECRET = process.env.SECRET || '';
+const CLIENT_ID = '758984664053-vfv9uik68cssqfn0s7m6sc60t8u0fon0.apps.googleusercontent.com';
 
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
 app.use(express.static(__dirname + '/static'));
 
+app.use(cookieSession({
+  name: 'session',
+  keys: [SECRET],
+}))
+
 const db = new dao.Database();
 
-app.all('/api/\*', function(req, res, next) {
-  if (req.body.phrase !== SECRET) {
-    res.status(403).send('Unauthorized');
+const isUserWhitelisted = (userId) => {
+  if (process.env.USER_WHITELIST) {
+    return process.env.USER_WHITELIST.split(',').includes(userId);
   } else {
+    return true;
+  }
+}
+
+app.all('/api/\*', function(req, res, next) {
+  if (isUserWhitelisted(req.session.userId)) {
     next();
+  } else {
+    res.status(403).send('Unauthorized');
   }
 });
 
-app.post('/api/login', function(req, res) {
-  res.status(200).end();
+app.post('/login', function(req, res) {
+  const auth = new GoogleAuth;
+  const client = new auth.OAuth2(CLIENT_ID, '', '');
+  client.verifyIdToken(
+      req.body.token,
+      CLIENT_ID,
+      (err, login) => {
+        const payload = login.getPayload();
+        const userId = payload['sub'];
+        if (isUserWhitelisted(userId)) {
+          req.session.userId = userId;
+          res.status(200).end();
+        } else {
+          res.status(403).end();
+        }
+      });
 });
 
 /* Card resource */
@@ -57,7 +86,7 @@ app.post('/api/cards/delete', function(req, res) {
 });
 
 // List all cards
-app.post('/api/cards/list', function(req, res) {
+app.get('/api/cards', function(req, res) {
   db.listCards((cards) => {
     res.json({cards: cards});
   }, (err) => {
