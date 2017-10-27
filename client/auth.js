@@ -1,7 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import $ from 'jquery';
-import { GoogleLogin } from 'react-google-login';
 import {
   Button,
   Col,
@@ -13,11 +11,18 @@ export default class Auth extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      phrase: '',
       verificationFailed: false,
     };
 
-    this.onLogin = this.onLogin.bind(this);
-    this.onVerificationFailed = this.onVerificationFailed.bind(this);
+    this.responseGoogle = this.responseGoogle.bind(this);
+  }
+
+  onPhraseChange(text) {
+    this.setState({
+      phrase: text,
+      verificationFailed: false,
+    });
   }
 
   onVerificationFailed() {
@@ -26,8 +31,8 @@ export default class Auth extends React.Component {
     });
   }
 
-  onLogin(response) {
-    this.props.verify(response.tokenId, this.onVerificationFailed);
+  responseGoogle(response) {
+    console.log(response);
   }
 
   render() {
@@ -48,13 +53,23 @@ export default class Auth extends React.Component {
       <Container>
         <Row className='justify-content-center'>
           <Col md='6'>
-            <GoogleLogin
-              clientId="758984664053-vfv9uik68cssqfn0s7m6sc60t8u0fon0.apps.googleusercontent.com"
-              className='btn btn-primary btn-block btn-lg'
-              buttonText="Login"
-              onSuccess={this.onLogin}
-              onFailure={this.onVerificationFailed}
-            />
+            <div className='input-group input-group-lg'>
+              <input
+                type='text'
+                className='form-control'
+                placeholder='phrase'
+                value={this.state.phrase}
+                onChange={(event) => this.onPhraseChange(event.target.value)} />
+              <span className='input-group-btn'>
+                <button
+                  className={'btn ' + buttonType}
+                  onClick={() =>
+                      this.props.verify(this.state.phrase, () => {
+                        this.onVerificationFailed();
+                      })
+                  } >Verify</button>
+              </span>
+            </div>
           </Col>
         </Row>
         {failBanner}

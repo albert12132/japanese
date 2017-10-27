@@ -5,15 +5,20 @@ export default class AppClient {
     this.phrase = '';
   }
 
-  verifyLogin(token, success, failure) {
-    $.post('/login', {
-      token: token
-    }, success)
+  verifyLogin(phrase, success, failure) {
+    $.post('/api/login', {
+      phrase: phrase
+    }, () => {
+      this.phrase = phrase;
+      success();
+    })
     .fail(failure);
   }
 
   loadCards(success) {
-    $.get('/api/cards', (response) => {
+    $.post('/api/cards/list', {
+      phrase: this.phrase
+    }, (response) => {
       const cards = {}
       for (let card of response.cards) {
         cards[card.card_id] = card;
@@ -30,6 +35,7 @@ export default class AppClient {
         meaning: card.meaning,
         tags: card.tags,
       },
+      phrase: this.phrase,
     }, (response) => {
       const newCard = {
         card_id: response.card_id,
@@ -45,12 +51,16 @@ export default class AppClient {
   updateCard(card, success) {
     $.post('/api/cards/update', {
       card: card,
-    }, success);
+      phrase: this.phrase,
+    }, () => {
+      success();
+    });
   }
 
   deleteCard(card_id, success) {
     $.post('/api/cards/delete', {
       card_id: card_id,
+      phrase: this.phrase,
     }, success);
   }
 }

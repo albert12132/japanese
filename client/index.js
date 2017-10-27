@@ -7,6 +7,7 @@ import Review from './review.js';
 import Quiz from './quiz.js';
 import AppClient from './client.js';
 import './style.css';
+import 'bootstrap';
 
 class App extends React.Component {
   constructor(props) {
