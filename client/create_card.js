@@ -26,16 +26,14 @@ export default class CreateCard extends React.Component {
 
   render() {
     return (
-      <Row className='justify-content-center'>
-        <Col xs='10' md='6'>
-          <Button
-            color='primary'
-            size='lg'
-            block
-            onClick={this.toggle}>
-            Create card
-          </Button>
-        </Col>
+      <div>
+        <Button
+          color='primary'
+          size='lg'
+          block
+          onClick={this.toggle}>
+          Create card
+        </Button>
         <EditCardModal
           initialCard={{}}
           tags={this.props.tags}
@@ -43,7 +41,7 @@ export default class CreateCard extends React.Component {
           close={this.toggle}
           saveCard={this.props.addNewCard}
         />
-      </Row>
+      </div>
     );
   }
 }

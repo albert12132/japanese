@@ -115,9 +115,9 @@ export default class EditCardModal extends React.Component {
           </FormGroup>
           <Row>
             <Col>
-              Tags
               <Select.Creatable
                 multi={true}
+                placeholder='Tags'
                 value={this.state.tags}
                 options={this.props.tags.toArray().map(tag => {
                   return {

@@ -13,158 +13,231 @@ import {
   Row,
 } from 'reactstrap';
 
+const QUIZ_TYPES = [
+  {value: 'reading', label: 'Reading: kanji to hiragana and English'},
+  {value: 'translating', label: 'Translating: English to kanji'},
+  {value: 'listening', label: 'Listening: hiragana to English'},
+];
+
 export default class Quiz extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      cardIndex: 0,
-      hiragana: "",
-      meaning: "",
-      incorrectHiragana: false,
-      incorrectMeaning: false,
-      disableGuess: false,
-      cards: this.props.cards.slice(),
-      tagsToFilter: [],
+      quizType: QUIZ_TYPES[0].value,
+      card: this.nextCard(),
     };
 
-    this.updateTagFilter = this.updateTagFilter.bind(this);
+    this.updateQuizType = this.updateQuizType.bind(this);
+    this.setNextCard = this.setNextCard.bind(this);
   }
 
   nextCard() {
-    this.setState((prevState) => {
-      let nextIndex = 0;
-      if (prevState.cards.length > 0) {
-        nextIndex = Math.floor(Math.random() * prevState.cards.length)
-        if (nextIndex === prevState.cardIndex) {
-          nextIndex = (nextIndex + 1) % prevState.cards.length
-        }
-      }
-      return {
-        cardIndex: nextIndex,
-        hiragana: "",
-        meaning: "",
-        incorrectHiragana: false,
-        incorrectMeaning: false,
-        disableGuess: false,
-      };
+    if (this.props.cards.isEmpty()) {
+      return null;
+    }
+
+    const cards = this.props.cards.toArray();
+    let nextIndex = 0;
+    nextIndex = Math.floor(Math.random() * cards.length);
+    return cards[nextIndex];
+  }
+
+  setNextCard() {
+    this.setState({
+      card: this.nextCard(),
     });
   }
 
-  onTextChange(field, text) {
+  updateQuizType(newType) {
+    this.setState({
+      quizType: newType.value,
+    });
+  }
+
+  render() {
+    const buttonType = this.state.incorrectHiragana || this.state.incorrectMeaning ? 'danger' : 'primary';
+    let quiz;
+    switch (this.state.quizType) {
+      case 'reading':
+        quiz = (
+          <ReadingQuiz
+            card={this.state.card}
+            nextCard={this.setNextCard}
+          />
+        );
+        break;
+      case 'translating':
+        quiz = (
+          <TranslatingQuiz
+            card={this.state.card}
+            nextCard={this.setNextCard}
+          />
+        );
+        break;
+      case 'listening':
+        quiz = (
+          <ListeningQuiz
+            card={this.state.card}
+            nextCard={this.setNextCard}
+          />
+        );
+        break;
+    }
+    return (
+      <Container>
+        <Row className='justify-content-center'>
+          <Col md='7'>
+            <Select
+              clearable={false}
+              value={this.state.quizType}
+              options={QUIZ_TYPES}
+              placeholder='Quiz type...'
+              onChange={this.updateQuizType}
+            />
+          </Col>
+        </Row>
+
+        <hr/>
+
+        {quiz}
+
+      </Container>
+    );
+  }
+}
+
+function ReadingQuiz(props) {
+  return (
+    <QuizTemplate
+      promptField='kanji'
+      guessField={['hiragana', 'kanji']}
+      card={props.card}
+      nextCard={props.nextCard}
+    />
+  );
+}
+
+function TranslatingQuiz(props) {
+  return (
+    <QuizTemplate
+      promptField='meaning'
+      guessField={['kanji']}
+      card={props.card}
+      nextCard={props.nextCard}
+    />
+  );
+}
+
+function ListeningQuiz(props) {
+  return (
+    <QuizTemplate
+      promptField='hiragana'
+      guessField={['meaning']}
+      card={props.card}
+      nextCard={props.nextCard}
+    />
+  );
+}
+
+class QuizTemplate extends React.Component {
+  constructor(props) {
+    super(props);
     const state = {
-      incorrectHiragana: false,
-      incorrectMeaning: false,
+      disableGuess: false,
     };
+    for (const field of this.props.guessField) {
+      state[field] = '';
+      state['incorrect' + field] = false;
+    }
+    this.state = state;
+  }
+
+  onTextChange(field, text) {
+    const state = {}
+    state['incorrect' + field] = false
     state[field] = text;
     this.setState(state);
   }
 
   guess() {
-    if (this.state.cards.length === 0) {
-      return;
-    }
-
-    const card = this.state.cards[this.state.cardIndex];
-    const incorrectHiragana = this.state.hiragana !== card.hiragana;
-    const incorrectMeaning = this.state.meaning !== card.meaning;
-    if (incorrectHiragana || incorrectMeaning) {
-      this.setState((prevState) => {
-        return {
-          incorrectHiragana: incorrectHiragana,
-          incorrectMeaning: incorrectMeaning,
-        };
-      });
-    } else {
-      this.setState({
-        disableGuess: true,
-      });
+    if (this.props.card) {
+      let wrong = false;
+      const state = {};
+      for (const field of this.props.guessField) {
+        if (this.state[field] !== this.props.card[field]) {
+          state['incorrect' + field] = true;
+          wrong = true;
+        }
+      }
+      if (wrong) {
+        this.setState(state);
+      } else {
+        this.setState({
+          disableGuess: true,
+        });
+      }
     }
   }
 
   reveal() {
-    if (this.state.cards.length === 0) {
-      return;
+    if (this.props.card) {
+      const state = {
+        disableGuess: true,
+      };
+      for (const field of this.props.guessField) {
+        state[field] = this.props.card[field];
+        state['incorrect' + field] = false;
+      }
+      this.setState(state);
     }
-
-    const card = this.state.cards[this.state.cardIndex];
-    this.setState({
-      hiragana: card.hiragana,
-      meaning: card.meaning,
-      incorrectHiragana: false,
-      incorrectMeaning: false,
-      disableGuess: true,
-    });
   }
 
-  updateTagFilter(newTags) {
-    if (newTags.length > 0) {
-      const newTagsSet = new Set(newTags).map(tag => tag.value);
-      const newCards = this.props.cards.filter(card => newTagsSet.isSubset(card.tags));
-      this.setState({
-        tagsToFilter: newTags,
-        cards: newCards,
-      });
-    } else {
-      this.setState({
-        tagsToFilter: newTags,
-        cards: this.props.cards.slice(),
-      });
+  nextCard() {
+    this.props.nextCard();
+    const state = {
+      disableGuess: false,
+    };
+    for (const field of this.props.guessField) {
+      state[field] = '';
+      state['incorrect' + field] = false;
     }
-    // Skip to the next card.
-    this.nextCard();
+    this.setState(state);
   }
 
   render() {
-    const buttonType = this.state.incorrectHiragana || this.state.incorrectMeaning ? 'danger' : 'primary';
+    let wrong = false;
+    for (const field of this.props.guessField) {
+      if (this.state['incorrect' + field]) {
+        wrong = true;
+        break;
+      }
+    }
+    const buttonType = wrong ? 'danger' : 'primary';
+
+    const inputs = this.props.guessField.map((field) => {
+      return (
+          <div key={field} className={this.state['incorrect' + field] ? 'has-danger' : ''}>
+            <Row className='justify-content-center'>
+              <Label md='1'>{field}</Label>
+              <Col md='6'>
+                <Input
+                  value={this.state[field]}
+                  onChange={(event) => this.onTextChange(field, event.target.value)} />
+              </Col>
+            </Row>
+          </div>
+      );
+    });
     return (
       <Container>
         <Row className='justify-content-center'>
-          <Col md='7'>
-            Filter tags
-            <Select
-              multi={true}
-              value={this.state.tagsToFilter}
-              options={this.props.tags.toArray().map(tag => {
-                return {
-                  value: tag,
-                  label: tag,
-                }
-              })}
-              onChange={this.updateTagFilter}
-            />
-            <hr/>
-          </Col>
-        </Row>
-
-        <Row className='justify-content-center'>
           <div>
-            <h1>{this.state.cardIndex >= this.state.cards.length
-                ?  'No results'
-                : this.state.cards[this.state.cardIndex].kanji}</h1>
+            <h1>{this.props.card ? this.props.card[this.props.promptField] : 'No results'}</h1>
           </div>
         </Row>
 
         <FormGroup>
-          <div className={this.state.incorrectHiragana ? 'has-danger' : ''}>
-            <Row className='justify-content-center'>
-              <Label md='1'>Hiragana</Label>
-              <Col md='6'>
-                <Input
-                  value={this.state.hiragana}
-                  onChange={(event) => this.onTextChange('hiragana', event.target.value)} />
-              </Col>
-            </Row>
-          </div>
-          <div className={this.state.incorrectMeaning ? 'has-danger' : ''}>
-            <Row className='justify-content-center'>
-              <Label md='1'>Meaning</Label>
-              <Col md='6'>
-                <Input
-                  value={this.state.meaning}
-                  onChange={(event) => this.onTextChange('meaning', event.target.value)} />
-              </Col>
-            </Row>
-          </div>
+          {inputs}
         </FormGroup>
 
         <GuessButtonGroup
@@ -172,7 +245,6 @@ export default class Quiz extends React.Component {
           reveal={() => this.reveal()}
           guessButtonType={buttonType}
           nextCard={() => this.nextCard()}
-          stopQuiz={this.props.stopQuiz}
           disableGuess={this.state.disableGuess}
         />
       </Container>
@@ -192,15 +264,6 @@ function GuessButtonGroup(props) {
             color='success'
             onClick={props.nextCard}>
             Next card
-          </Button>
-        </Row>
-        <Row className='justify-content-center'>
-          <Button
-            className='col-md-6 col-10'
-            size='lg'
-            color='danger'
-            onClick={props.stopQuiz}>
-            Stop quiz
           </Button>
         </Row>
       </div>
@@ -230,15 +293,6 @@ function GuessButtonGroup(props) {
             color='secondary'
             onClick={props.nextCard}>
             Next card
-          </Button>
-        </Row>
-        <Row className='justify-content-center'>
-          <Button
-            className='col-md-6 col-10'
-            size='lg'
-            color='danger'
-            onClick={props.stopQuiz}>
-            Stop quiz
           </Button>
         </Row>
       </div>

@@ -6,8 +6,16 @@ import Auth from './auth.js';
 import Review from './review.js';
 import Quiz from './quiz.js';
 import AppClient from './client.js';
-import './style.css';
-import 'bootstrap';
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
+import {
+  Button,
+  Col,
+  Container,
+  Row,
+} from 'reactstrap';
+import CreateCard from './create_card.js';
+import Header from './header.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -17,6 +25,7 @@ class App extends React.Component {
       cards: new OrderedMap(),
       tags: new Set(),
       quizEnabled: false,
+      tagsToFilter: new Set(),
     }
     this.client = new AppClient();
 
@@ -24,7 +33,8 @@ class App extends React.Component {
     this.updateCard = this.updateCard.bind(this);
     this.deleteCard = this.deleteCard.bind(this);
     this.verifyLogin = this.verifyLogin.bind(this);
-    this.setQuizEnabled = this.setQuizEnabled.bind(this);
+    this.toggleQuizEnabled = this.toggleQuizEnabled.bind(this);
+    this.updateTagFilter = this.updateTagFilter.bind(this);
   }
 
   addNewCard(card) {
@@ -76,10 +86,26 @@ class App extends React.Component {
     }, failure);
   }
 
-  setQuizEnabled(enabled) {
+  toggleQuizEnabled() {
     this.setState({
-      quizEnabled: enabled,
+      quizEnabled: !this.state.quizEnabled,
     });
+  }
+
+  updateTagFilter(newTags) {
+    this.setState({
+      tagsToFilter: newTags,
+    });
+  }
+
+  getFilteredCards() {
+    if (this.state.tagsToFilter.isEmpty()) {
+      return this.state.cards;
+    } else {
+      return this.state.cards.filter(card => {
+        return !this.state.tagsToFilter.intersect(card.tags).isEmpty();
+      });
+    }
   }
 
   render() {
@@ -87,24 +113,40 @@ class App extends React.Component {
       return (
         <Auth verify={(phrase, failure) => this.verifyLogin(phrase, failure)}/>
       );
-    } else if (this.state.quizEnabled) {
-      return (
-        <Quiz
-          cards={this.state.cards.toArray()}
+    } else {
+      const header = (
+        <Header
+          toggleQuizEnabled={this.toggleQuizEnabled}
+          quizEnabled={this.state.quizEnabled}
+          addNewCard={this.addNewCard}
           tags={this.state.tags}
-          stopQuiz={() => this.setQuizEnabled(false)}
+          tagsToFilter={this.state.tagsToFilter}
+          updateTagFilter={this.updateTagFilter}
         />
       );
-    } else {
+
+      let body;
+      if (this.state.quizEnabled) {
+        body = (
+          <Quiz
+            cards={this.getFilteredCards()}
+          />
+        );
+      } else {
+        body = (
+          <Review
+            updateCard={this.updateCard}
+            deleteCard={this.deleteCard}
+            cards={this.getFilteredCards()}
+            tags={this.state.tags}
+          />
+        );
+      }
       return (
-        <Review
-          addNewCard={this.addNewCard}
-          setQuizEnabled={this.setQuizEnabled}
-          updateCard={this.updateCard}
-          deleteCard={this.deleteCard}
-          cards={this.state.cards.toArray()}
-          tags={this.state.tags}
-        />
+        <div>
+          {header}
+          {body}
+        </div>
       );
     }
   }
