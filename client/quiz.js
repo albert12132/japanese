@@ -110,7 +110,7 @@ function ReadingQuiz(props) {
   return (
     <QuizTemplate
       promptField='kanji'
-      guessField={['hiragana', 'kanji']}
+      guessField={['hiragana', 'meaning']}
       card={props.card}
       nextCard={props.nextCard}
     />
