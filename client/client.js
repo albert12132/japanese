@@ -57,6 +57,14 @@ export default class AppClient {
     });
   }
 
+  updateCardSuccesses(card_id, successes) {
+    $.post('/api/cards/update/successes', {
+      card_id: card_id,
+      successes: JSON.stringify(successes),
+      phrase: this.phrase,
+    });
+  }
+
   deleteCard(card_id, success) {
     $.post('/api/cards/delete', {
       card_id: card_id,

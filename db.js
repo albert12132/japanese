@@ -86,6 +86,36 @@ class PostGresDatabase {
     });
   }
 
+  updateCardSuccesses(card_id, successes, success, failure) {
+    if (!card_id) {
+      failure('missing card_id');
+    } else if (!successes) {
+      failure('missing successes');
+    }
+
+    this.pool.connect((err, client, done) => {
+      if (err) {
+        failure(err);
+        return;
+      }
+
+      const query = 'UPDATE Cards SET successes = $2 WHERE card_id = $1';
+      const values = [card_id, successes];
+      client.query(
+        query,
+        values,
+        (err) => {
+          done();
+          if (err) {
+            failure(err);
+          } else {
+            success();
+          }
+        });
+    });
+  }
+
+
   deleteCard(cardId, success, failure) {
     this.pool.connect((err, client, done) => {
       if (err) {

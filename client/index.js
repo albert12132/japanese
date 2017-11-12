@@ -16,6 +16,7 @@ import {
 } from 'reactstrap';
 import CreateCard from './create_card.js';
 import Header from './header.js';
+import QuizClient from './quiz_client.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class App extends React.Component {
       tagsToFilter: new Set(),
     }
     this.client = new AppClient();
+    this.quizClient = new QuizClient(this.client);
 
     this.addNewCard = this.addNewCard.bind(this);
     this.updateCard = this.updateCard.bind(this);
@@ -76,7 +78,12 @@ class App extends React.Component {
   verifyLogin(phrase, failure) {
     this.client.verifyLogin(phrase, () => {
       this.client.loadCards((cards) => {
-        const cardMap = new OrderedMap(cards);
+        this.quizClient.loadSuccessRates(cards);
+
+        const cardMap = new OrderedMap(cards).map(card => {
+          card.successes = undefined;
+          return card;
+        });
         this.setState({
           verified: true,
           cards: cardMap,
@@ -130,6 +137,7 @@ class App extends React.Component {
         body = (
           <Quiz
             cards={this.getFilteredCards()}
+            quizClient={this.quizClient}
           />
         );
       } else {

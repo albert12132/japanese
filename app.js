@@ -46,6 +46,15 @@ app.post('/api/cards/update', function(req, res) {
   });
 });
 
+// Update card successes
+app.post('/api/cards/update/successes', function(req, res) {
+  db.updateCardSuccesses(req.body.card_id, JSON.parse(req.body.successes), () => {
+    res.end();
+  }, (err) => {
+    res.status(400).send(err);
+  });
+});
+
 
 // Delete card
 app.post('/api/cards/delete', function(req, res) {

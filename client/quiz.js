@@ -12,34 +12,27 @@ import {
   FormGroup,
   Row,
 } from 'reactstrap';
-
-const QUIZ_TYPES = [
-  {value: 'reading', label: 'Reading: kanji to hiragana and English'},
-  {value: 'translating', label: 'Translating: English to kanji'},
-  {value: 'listening', label: 'Listening: hiragana to English'},
-];
+import QUIZ_TYPES from './quiz_types.js';
 
 export default class Quiz extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       quizType: QUIZ_TYPES[0].value,
-      card: this.nextCard(),
+      card: this.nextCard(QUIZ_TYPES[0].value),
     };
 
     this.updateQuizType = this.updateQuizType.bind(this);
     this.setNextCard = this.setNextCard.bind(this);
   }
 
-  nextCard() {
+  nextCard(quizType) {
     if (this.props.cards.isEmpty()) {
       return null;
     }
 
-    const cards = this.props.cards.toArray();
-    let nextIndex = 0;
-    nextIndex = Math.floor(Math.random() * cards.length);
-    return cards[nextIndex];
+    return this.props.quizClient.pickCard(
+        this.props.cards, quizType || this.state.quizType);
   }
 
   setNextCard() {
@@ -63,6 +56,8 @@ export default class Quiz extends React.Component {
           <ReadingQuiz
             card={this.state.card}
             nextCard={this.setNextCard}
+            quizType={this.state.quizType}
+            quizClient={this.props.quizClient}
           />
         );
         break;
@@ -71,6 +66,8 @@ export default class Quiz extends React.Component {
           <TranslatingQuiz
             card={this.state.card}
             nextCard={this.setNextCard}
+            quizType={this.state.quizType}
+            quizClient={this.props.quizClient}
           />
         );
         break;
@@ -79,6 +76,8 @@ export default class Quiz extends React.Component {
           <ListeningQuiz
             card={this.state.card}
             nextCard={this.setNextCard}
+            quizType={this.state.quizType}
+            quizClient={this.props.quizClient}
           />
         );
         break;
@@ -113,6 +112,8 @@ function ReadingQuiz(props) {
       guessField={['hiragana', 'meaning']}
       card={props.card}
       nextCard={props.nextCard}
+      quizType={props.quizType}
+      quizClient={props.quizClient}
     />
   );
 }
@@ -124,6 +125,8 @@ function TranslatingQuiz(props) {
       guessField={['kanji']}
       card={props.card}
       nextCard={props.nextCard}
+      quizType={props.quizType}
+      quizClient={props.quizClient}
     />
   );
 }
@@ -135,6 +138,8 @@ function ListeningQuiz(props) {
       guessField={['meaning']}
       card={props.card}
       nextCard={props.nextCard}
+      quizType={props.quizType}
+      quizClient={props.quizClient}
     />
   );
 }
@@ -172,6 +177,7 @@ class QuizTemplate extends React.Component {
       if (wrong) {
         this.setState(state);
       } else {
+        this.props.quizClient.successfulGuess(this.props.card.card_id, this.props.quizType);
         this.setState({
           disableGuess: true,
         });
