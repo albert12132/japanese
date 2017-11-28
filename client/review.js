@@ -56,6 +56,7 @@ export default class Review extends React.Component {
           tags={this.props.tags}
           saveCard={this.props.updateCard}
           close={this.closeModal}
+          deleteCard={this.props.deleteCard}
         />
     }
 
@@ -79,24 +80,14 @@ function CardSummary(props) {
   return (
     <Col>
       <Card>
+      <button
+        onClick={() => props.editCard(props.card)}>
         <CardBody className='text-nowrap'>
           <CardTitle>{props.card.kanji}</CardTitle>
           <CardSubtitle>{props.card.hiragana}</CardSubtitle>
           <CardText>{props.card.meaning}</CardText>
-          <button
-            className='close'
-            type='button'
-            onClick={() => props.deleteCard(props.card.card_id)}>
-            &times;
-          </button>
-          <button
-            className='close'
-            style={{float: 'left'}}
-            type='button'
-            onClick={() => props.editCard(props.card)}>
-            &#x270e;
-          </button>
         </CardBody>
+        </button>
       </Card>
     </Col>
   );

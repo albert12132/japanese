@@ -10,12 +10,40 @@ body {
 
 .card {
   background-color: #fdfdfd;
-  padding:1em;
+  padding:0;
   min-width: 5em;
   box-shadow: 5px 5px #eee;
   margin-bottom: 14px;
+  border-width: 0;
+}
+
+.card button {
+  background-color: inherit;
+  border-width: 0;
+  padding: 1em;
+  margin: 0;
+  cursor: pointer;
+  outline-width:0;
+}
+
+.card-title {
+  font-size:2em
+}
+
+.card-body {
+  text-align:center;
 }
 
 .card:hover {
   background-color: #fff;
 }
+
+.edit-card-input {
+  text-align:center;
+}
+
+.edit-card-input-kanji {
+  font-size:3em;
+}
+
+

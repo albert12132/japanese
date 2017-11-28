@@ -81,34 +81,47 @@ export default class EditCardModal extends React.Component {
 
   render() {
     const buttonType = this.state.saveFailed ? 'danger' : 'primary';
+    let deleteCardButton = null;
+    if (this.props.deleteCard && this.state.card_id) {
+      deleteCardButton = (
+        <Button
+          color='danger'
+          onClick={() => {
+            this.props.deleteCard(this.state.card_id);
+            this.close();
+          }}>
+          Delete
+        </Button>
+      );
+    }
     return (
       <Modal isOpen={this.props.modal} toggle={this.close}>
         <ModalHeader toggle={this.close}>Edit card</ModalHeader>
 
         <ModalBody>
           <FormGroup row className={this.validate(this.state.kanji)}>
-            <Label md='2'>Kanji</Label>
-            <Col md='10'>
+            <Col md='12'>
               <Input
                 placeholder='kanji'
+                className='edit-card-input edit-card-input-kanji'
                 value={this.state.kanji}
                 onChange={(event) => this.onTextChange('kanji', event.target.value)} />
             </Col>
           </FormGroup>
           <FormGroup row className={this.validate(this.state.hiragana)}>
-            <Label md='2'>Hiragana</Label>
-            <Col md='10'>
+            <Col md='12'>
               <Input
                 placeholder='hiragana'
+                className='edit-card-input'
                 value={this.state.hiragana}
                 onChange={(event) => this.onTextChange('hiragana', event.target.value)} />
             </Col>
           </FormGroup>
           <FormGroup row className={this.validate(this.state.meaning)}>
-            <Label md='2'>Meaning</Label>
-            <Col md='10'>
+            <Col md='12'>
               <Input
                 placeholder='meaning'
+                className='edit-card-input'
                 value={this.state.meaning}
                 onChange={(event) => this.onTextChange('meaning', event.target.value)} />
             </Col>
@@ -146,6 +159,7 @@ export default class EditCardModal extends React.Component {
             onClick={this.close}>
             Cancel
           </Button>
+          {deleteCardButton}
         </ModalFooter>
       </Modal>
     );
