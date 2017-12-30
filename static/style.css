@@ -2,10 +2,50 @@ body {
   margin-bottom: 30px;
 }
 
-.app-header {
-  background-color: #2a2c2d;
+button.green, nav.green {
+  border-color: #21ce99;
+  background-color: #21ce99;
+  color: white;
+}
+
+nav.green .navbar-brand, nav.green .navbar-brand:hover {
+  color: white;
+}
+
+button.green:hover {
+  border-color: #1ebd8c;
+  background-color: #1ebd8c;
+  color: white;
+}
+
+
+button.red {
+  border-color: #f45532;
+  background-color: #f45532;
+  color: white;
+}
+
+button.red:hover {
+  border-color: #cd2d0b;
+  background-color: #cd2d0b;
+  color: white;
+}
+
+input.red {
+  border-color: #f45532;
+}
+
+label.red {
+  color: #f45532;
+}
+
+.large-section {
   padding: 30px 0;
   margin-bottom: 30px;
+}
+
+.app-header {
+  background-color: #2a2c2d;
 }
 
 .card {
@@ -38,6 +78,16 @@ body {
   background-color: #fff;
 }
 
+input.form-control {
+  border-radius:0px;
+  border-width: 0 0 2px 0;
+}
+
+input.form-control:focus {
+  border-color: #21ce99;
+}
+
+
 .edit-card-input {
   text-align:center;
 }
@@ -45,5 +95,3 @@ body {
 .edit-card-input-kanji {
   font-size:3em;
 }
-
-

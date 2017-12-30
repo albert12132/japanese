@@ -2,14 +2,25 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: './client/index.js',
+  entry: {
+    app: './client/index.js',
+    login: './client/login.js',
+  },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'static')
   },
   devServer: {
     contentBase: './static/',
     proxy: {
+      '/': {
+        target: 'http://localhost:3000',
+        secure: false
+      },
+      '/auth': {
+        target: 'http://localhost:3000',
+        secure: false
+      },
       '/api': {
         target: 'http://localhost:3000',
         secure: false

@@ -28,7 +28,7 @@ export default class CreateCard extends React.Component {
     return (
       <div>
         <Button
-          color='primary'
+          className='white'
           size='lg'
           block
           onClick={this.toggle}>

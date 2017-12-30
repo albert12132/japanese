@@ -14,12 +14,12 @@ import CreateCard from './create_card.js';
 
 export default function Header(props) {
   return (
-    <div className='app-header'>
+    <div className='app-header large-section'>
       <Container>
         <Row className='justify-content-center align-items-center'>
           <Col xs='5' md='3'>
             <Button
-              color={props.quizEnabled ? 'danger' : 'success'}
+              className={props.quizEnabled ? 'red' : 'green'}
               size='lg'
               block
               onClick={props.toggleQuizEnabled} >

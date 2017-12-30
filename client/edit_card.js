@@ -9,6 +9,7 @@ import {
   Container,
   Input,
   Label,
+  Form,
   FormGroup,
   Modal,
   ModalBody,
@@ -80,12 +81,12 @@ export default class EditCardModal extends React.Component {
   }
 
   render() {
-    const buttonType = this.state.saveFailed ? 'danger' : 'primary';
+    const buttonType = this.state.saveFailed ? 'red' : 'green';
     let deleteCardButton = null;
     if (this.props.deleteCard && this.state.card_id) {
       deleteCardButton = (
         <Button
-          color='danger'
+          className='red'
           onClick={() => {
             this.props.deleteCard(this.state.card_id);
             this.close();
@@ -99,67 +100,77 @@ export default class EditCardModal extends React.Component {
         <ModalHeader toggle={this.close}>Edit card</ModalHeader>
 
         <ModalBody>
-          <FormGroup row className={this.validate(this.state.kanji)}>
-            <Col md='12'>
-              <Input
-                placeholder='kanji'
-                className='edit-card-input edit-card-input-kanji'
-                value={this.state.kanji}
-                onChange={(event) => this.onTextChange('kanji', event.target.value)} />
-            </Col>
-          </FormGroup>
-          <FormGroup row className={this.validate(this.state.hiragana)}>
-            <Col md='12'>
-              <Input
-                placeholder='hiragana'
-                className='edit-card-input'
-                value={this.state.hiragana}
-                onChange={(event) => this.onTextChange('hiragana', event.target.value)} />
-            </Col>
-          </FormGroup>
-          <FormGroup row className={this.validate(this.state.meaning)}>
-            <Col md='12'>
-              <Input
-                placeholder='meaning'
-                className='edit-card-input'
-                value={this.state.meaning}
-                onChange={(event) => this.onTextChange('meaning', event.target.value)} />
-            </Col>
-          </FormGroup>
-          <Row>
-            <Col>
-              <Select.Creatable
-                multi={true}
-                placeholder='Tags'
-                value={this.state.tags}
-                options={this.props.tags.toArray().map(tag => {
-                  return {
-                    value: tag,
-                    label: tag,
-                  }
-                })}
-                onChange={(newTags) => {
-                  this.setState({
-                    tags: newTags,
-                  });
-                }}
-              />
+          <Form onSubmit={(event) => {
+            event.preventDefault();
+            this.saveCard();
+          }}>
+            <FormGroup row className={this.validate(this.state.kanji)}>
+              <Col md='12'>
+                <Input
+                  autoFocus
+                  placeholder='kanji'
+                  className='edit-card-input edit-card-input-kanji'
+                  value={this.state.kanji}
+                  onChange={(event) => this.onTextChange('kanji', event.target.value)} />
               </Col>
-          </Row>
+            </FormGroup>
+            <FormGroup row className={this.validate(this.state.hiragana)}>
+              <Col md='12'>
+                <Input
+                  placeholder='hiragana'
+                  className='edit-card-input'
+                  value={this.state.hiragana}
+                  onChange={(event) => this.onTextChange('hiragana', event.target.value)} />
+              </Col>
+            </FormGroup>
+            <FormGroup row className={this.validate(this.state.meaning)}>
+              <Col md='12'>
+                <Input
+                  placeholder='meaning'
+                  className='edit-card-input'
+                  value={this.state.meaning}
+                  onChange={(event) => this.onTextChange('meaning', event.target.value)} />
+              </Col>
+            </FormGroup>
+
+            <FormGroup>
+              <Col>
+                <Select.Creatable
+                  multi={true}
+                  placeholder='Tags'
+                  value={this.state.tags}
+                  options={this.props.tags.toArray().map(tag => {
+                    return {
+                      value: tag,
+                      label: tag,
+                    }
+                  })}
+                  onChange={(newTags) => {
+                    this.setState({
+                      tags: newTags,
+                    });
+                  }}
+                />
+                </Col>
+            </FormGroup>
+
+            <Row className='justify-content-center'>
+              <Button
+                type='submit'
+                className={buttonType}
+                onClick={this.saveCard} >
+                Save
+              </Button>
+              <Button
+                onClick={this.close}>
+                Cancel
+              </Button>
+              {deleteCardButton}
+            </Row>
+          </Form>
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            color={buttonType}
-            onClick={this.saveCard} >
-            Save
-          </Button>
-          <Button
-            color='secondary'
-            onClick={this.close}>
-            Cancel
-          </Button>
-          {deleteCardButton}
         </ModalFooter>
       </Modal>
     );

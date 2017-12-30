@@ -8,7 +8,9 @@ import {
   Col,
   Container,
   Input,
+  InputGroup,
   Label,
+  Form,
   FormGroup,
   Row,
 } from 'reactstrap';
@@ -19,25 +21,31 @@ export default class Quiz extends React.Component {
     super(props);
     this.state = {
       quizType: QUIZ_TYPES[0].value,
-      card: this.nextCard(QUIZ_TYPES[0].value),
+      cardIndex: 0,
+      card: this.props.cards.get(0),
     };
 
     this.updateQuizType = this.updateQuizType.bind(this);
     this.setNextCard = this.setNextCard.bind(this);
   }
 
-  nextCard(quizType) {
+  nextCard(index) {
     if (this.props.cards.isEmpty()) {
       return null;
     }
 
-    return this.props.quizClient.pickCard(
-        this.props.cards, quizType || this.state.quizType);
+    if (index === undefined) {
+      index = this.state.cardIndex;
+    }
+
+    return this.props.cards.get(index);
   }
 
   setNextCard() {
+    const nextIndex = this.state.cardIndex + 1;
     this.setState({
-      card: this.nextCard(),
+      cardIndex: nextIndex,
+      card: this.nextCard(nextIndex),
     });
   }
 
@@ -48,7 +56,6 @@ export default class Quiz extends React.Component {
   }
 
   render() {
-    const buttonType = this.state.incorrectHiragana || this.state.incorrectMeaning ? 'danger' : 'primary';
     let quiz;
     switch (this.state.quizType) {
       case 'reading':
@@ -57,7 +64,6 @@ export default class Quiz extends React.Component {
             card={this.state.card}
             nextCard={this.setNextCard}
             quizType={this.state.quizType}
-            quizClient={this.props.quizClient}
           />
         );
         break;
@@ -67,7 +73,6 @@ export default class Quiz extends React.Component {
             card={this.state.card}
             nextCard={this.setNextCard}
             quizType={this.state.quizType}
-            quizClient={this.props.quizClient}
           />
         );
         break;
@@ -77,7 +82,6 @@ export default class Quiz extends React.Component {
             card={this.state.card}
             nextCard={this.setNextCard}
             quizType={this.state.quizType}
-            quizClient={this.props.quizClient}
           />
         );
         break;
@@ -113,7 +117,6 @@ function ReadingQuiz(props) {
       card={props.card}
       nextCard={props.nextCard}
       quizType={props.quizType}
-      quizClient={props.quizClient}
     />
   );
 }
@@ -126,7 +129,6 @@ function TranslatingQuiz(props) {
       card={props.card}
       nextCard={props.nextCard}
       quizType={props.quizType}
-      quizClient={props.quizClient}
     />
   );
 }
@@ -139,7 +141,6 @@ function ListeningQuiz(props) {
       card={props.card}
       nextCard={props.nextCard}
       quizType={props.quizType}
-      quizClient={props.quizClient}
     />
   );
 }
@@ -177,7 +178,6 @@ class QuizTemplate extends React.Component {
       if (wrong) {
         this.setState(state);
       } else {
-        this.props.quizClient.successfulGuess(this.props.card.card_id, this.props.quizType);
         this.setState({
           disableGuess: true,
         });
@@ -218,41 +218,54 @@ class QuizTemplate extends React.Component {
         break;
       }
     }
-    const buttonType = wrong ? 'danger' : 'primary';
+    const buttonType = wrong ? 'red' : 'green';
 
-    const inputs = this.props.guessField.map((field) => {
+    const inputs = this.props.guessField.map((field, i) => {
+      const color = this.state['incorrect' + field] ? 'red' : 'green';
       return (
-          <div key={field} className={this.state['incorrect' + field] ? 'has-danger' : ''}>
-            <Row className='justify-content-center'>
-              <Label md='1'>{field}</Label>
-              <Col md='6'>
-                <Input
-                  value={this.state[field]}
-                  onChange={(event) => this.onTextChange(field, event.target.value)} />
-              </Col>
-            </Row>
-          </div>
+          <FormGroup key={field}>
+            <InputGroup>
+              <Label md='2' className={color}>{field}</Label>
+              <Input
+                md='10'
+                autoFocus={i === 0}
+                value={this.state[field]}
+                className={color}
+                onChange={(event) => this.onTextChange(field, event.target.value)} />
+            </InputGroup>
+          </FormGroup>
       );
     });
     return (
       <Container>
         <Row className='justify-content-center'>
           <div>
-            <h1>{this.props.card ? this.props.card[this.props.promptField] : 'No results'}</h1>
+            <h1>{this.props.card ? this.props.card[this.props.promptField] : 'Done'}</h1>
           </div>
         </Row>
 
-        <FormGroup>
-          {inputs}
-        </FormGroup>
+        <Row className='justify-content-center'>
+          <Col md='8'>
+            <Form onSubmit={(event) => {
+              event.preventDefault();
+              if (this.state.disableGuess) {
+                this.nextCard();
+              } else {
+                this.guess();
+              }
+            }}>
+              {inputs}
 
-        <GuessButtonGroup
-          guess={() => this.guess()}
-          reveal={() => this.reveal()}
-          guessButtonType={buttonType}
-          nextCard={() => this.nextCard()}
-          disableGuess={this.state.disableGuess}
-        />
+              <GuessButtonGroup
+                guess={() => this.guess()}
+                reveal={() => this.reveal()}
+                guessButtonType={buttonType}
+                nextCard={() => this.nextCard()}
+                disableGuess={this.state.disableGuess}
+              />
+            </Form>
+          </Col>
+        </Row>
       </Container>
     );
   }
@@ -264,11 +277,9 @@ function GuessButtonGroup(props) {
       <div>
         <Row className='justify-content-center'>
           <Button
-            key='top-middle-btn'
-            className='col-md-6 col-10'
-            size='lg'
-            color='success'
-            onClick={props.nextCard}>
+            type='submit'
+            className='green'
+            size='lg'>
             Next card
           </Button>
         </Row>
@@ -279,24 +290,18 @@ function GuessButtonGroup(props) {
       <div>
         <Row className='justify-content-center'>
           <Button
-            className='col-md-2 col-10'
-            size='lg'
-            color={props.guessButtonType}
-            onClick={props.guess}>
+            type='submit'
+            className={props.guessButtonType}
+            size='lg'>
             Guess
           </Button>
           <Button
-            key='top-middle-btn'
-            className='col-md-2 col-5'
             size='lg'
-            color='secondary'
             onClick={props.reveal}>
             Reveal
           </Button>
           <Button
-            className='col-md-2 col-5'
             size='lg'
-            color='secondary'
             onClick={props.nextCard}>
             Next card
           </Button>
