@@ -72,7 +72,7 @@ export default class LoginPage extends React.Component {
                   <InputGroup>
                     <Input
                       autoFocus
-                      type='text'
+                      type='password'
                       className={color}
                       placeholder='password'
                       value={this.state.phrase}

@@ -71,6 +71,8 @@ class PostGresDatabase {
         return;
       }
 
+      console.log(card);
+
       const fields = new Map();
       if (card.kanji) {
         fields.set('kanji', card.kanji);
@@ -86,6 +88,9 @@ class PostGresDatabase {
       }
       if (card.successes) {
         fields.set('successes', card.successes);
+      }
+      if (card.last_attempts) {
+        fields.set('last_attempts', card.last_attempts);
       }
 
       const query =
@@ -140,7 +145,6 @@ class PostGresDatabase {
         return;
       }
 
-      const cardId = uuid();
       client.query(
         'select * from Cards',
         (err, res) => {

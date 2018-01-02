@@ -14,18 +14,16 @@ import {
   FormGroup,
   Row,
 } from 'reactstrap';
-import QUIZ_TYPES from './quiz_types.js';
+import QuizHeader from './quiz_header.js';
 
 export default class Quiz extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      quizType: QUIZ_TYPES[0].value,
       cardIndex: 0,
       card: this.props.cards.get(0),
     };
 
-    this.updateQuizType = this.updateQuizType.bind(this);
     this.setNextCard = this.setNextCard.bind(this);
   }
 
@@ -49,21 +47,16 @@ export default class Quiz extends React.Component {
     });
   }
 
-  updateQuizType(newType) {
-    this.setState({
-      quizType: newType.value,
-    });
-  }
-
   render() {
     let quiz;
-    switch (this.state.quizType) {
+    switch (this.props.quizType) {
       case 'reading':
         quiz = (
           <ReadingQuiz
             card={this.state.card}
             nextCard={this.setNextCard}
-            quizType={this.state.quizType}
+            quizType={this.props.quizType}
+            updateCard={this.props.updateCard}
           />
         );
         break;
@@ -72,7 +65,8 @@ export default class Quiz extends React.Component {
           <TranslatingQuiz
             card={this.state.card}
             nextCard={this.setNextCard}
-            quizType={this.state.quizType}
+            quizType={this.props.quizType}
+            updateCard={this.props.updateCard}
           />
         );
         break;
@@ -81,30 +75,21 @@ export default class Quiz extends React.Component {
           <ListeningQuiz
             card={this.state.card}
             nextCard={this.setNextCard}
-            quizType={this.state.quizType}
+            quizType={this.props.quizType}
+            updateCard={this.props.updateCard}
           />
         );
         break;
     }
     return (
-      <Container>
-        <Row className='justify-content-center'>
-          <Col md='7'>
-            <Select
-              clearable={false}
-              value={this.state.quizType}
-              options={QUIZ_TYPES}
-              placeholder='Quiz type...'
-              onChange={this.updateQuizType}
-            />
-          </Col>
-        </Row>
-
-        <hr/>
-
-        {quiz}
-
-      </Container>
+      <div>
+        <QuizHeader
+          stopQuiz={this.props.onStopQuiz}
+        />
+        <Container>
+          {quiz}
+        </Container>
+      </div>
     );
   }
 }
@@ -116,6 +101,7 @@ function ReadingQuiz(props) {
       guessField={['hiragana', 'meaning']}
       card={props.card}
       nextCard={props.nextCard}
+      updateCard={props.updateCard}
       quizType={props.quizType}
     />
   );
@@ -128,6 +114,7 @@ function TranslatingQuiz(props) {
       guessField={['kanji']}
       card={props.card}
       nextCard={props.nextCard}
+      updateCard={props.updateCard}
       quizType={props.quizType}
     />
   );
@@ -140,6 +127,7 @@ function ListeningQuiz(props) {
       guessField={['meaning']}
       card={props.card}
       nextCard={props.nextCard}
+      updateCard={props.updateCard}
       quizType={props.quizType}
     />
   );
@@ -180,6 +168,8 @@ class QuizTemplate extends React.Component {
       } else {
         this.setState({
           disableGuess: true,
+        }, () => {
+          this.props.updateCard(this.updateSuccess(true))
         });
       }
     }
@@ -194,7 +184,9 @@ class QuizTemplate extends React.Component {
         state[field] = this.props.card[field];
         state['incorrect' + field] = false;
       }
-      this.setState(state);
+      this.setState(state, () => {
+        this.props.updateCard(this.updateSuccess(false));
+      });
     }
   }
 
@@ -208,6 +200,40 @@ class QuizTemplate extends React.Component {
       state['incorrect' + field] = false;
     }
     this.setState(state);
+  }
+
+  updateSuccess(success) {
+    const newCard = {
+      card_id: this.props.card.card_id,
+      kanji: this.props.card.kanji,
+      hiragana: this.props.card.hiragana,
+      meaning: this.props.card.meaning,
+    }
+    if (this.props.card.tags) {
+      newCard.tags = this.props.card.tags;
+    }
+
+    if (!this.props.card.successes) {
+      this.props.card.successes = {};
+    }
+    if (!this.props.card.successes[this.props.quizType]) {
+      this.props.card.successes[this.props.quizType] = 0;
+    }
+    if (success) {
+      this.props.card.successes[this.props.quizType] += 1;
+    } else {
+      this.props.card.successes[this.props.quizType] = 0;
+    }
+
+    if (!this.props.card.last_attempts) {
+      this.props.card.last_attempts = {};
+    }
+    this.props.card.last_attempts[this.props.quizType] =
+        new Date().getTime();
+
+    newCard.successes = this.props.card.successes;
+    newCard.last_attempts = this.props.card.last_attempts;
+    return newCard;
   }
 
   render() {

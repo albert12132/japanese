@@ -9,7 +9,6 @@ function isAuthorized(token) {
 module.exports.addRoutes = (app, db) => {
 
   app.get('/', (req, res) => {
-    console.log('session token: ' + req.session.token);
     if (!isAuthorized(req.session.token)) {
       res.render('page', { script: 'login.js' });
     } else {
@@ -21,6 +20,9 @@ module.exports.addRoutes = (app, db) => {
    * Auth *
    ********/
 
+  /**
+   * token: string
+   */
   app.post('/auth/login', (req, res) => {
     if (isAuthorized(req.body.token)) {
       req.session.token = req.body.token;
@@ -48,7 +50,22 @@ module.exports.addRoutes = (app, db) => {
    * API *
    *******/
 
-  // Create card
+  /**
+   * Create card.
+   *
+   * - Request:
+   * card: {
+   *   kanji: string
+   *   hiragana: string
+   *   meaning: string
+   *   tags (optional): [
+   *     string
+   *   ]
+   * }
+   *
+   * - Response:
+   * card_id: string
+   */
   app.post('/api/cards', (req, res) => {
     db.insertCard(JSON.parse(req.body.card), (cardId) => {
       res.json({card_id: cardId});
@@ -57,7 +74,29 @@ module.exports.addRoutes = (app, db) => {
     });
   });
 
-  // Update card
+  /**
+   * Update card.
+   *
+   * - Request:
+   * card: {
+   *   kanji (optional): string
+   *   hiragana (optional): string
+   *   meaning (optional): string
+   *   tags (optional): [
+   *     string
+   *   ]
+   *   successes (optional): {
+   *     reading (optional): number
+   *     listening (optional): number
+   *     translating (optional): number
+   *   }
+   *   last_attempts: {
+   *     reading (optional): number
+   *     listening (optional): number
+   *     translating (optional): number
+   *   }
+   * }
+   */
   app.post('/api/cards/:cardId', (req, res) => {
     db.updateCard(req.params.cardId, JSON.parse(req.body.card), () => {
       res.end();
@@ -76,7 +115,32 @@ module.exports.addRoutes = (app, db) => {
     });
   });
 
-  // List cards
+  /**
+   * List cards.
+   *
+   * - Response:
+   * cards: [
+   *   {
+   *     card_id: string
+   *     kanji: string
+   *     hiragana: string
+   *     meaning: string
+   *     tags: [
+   *       string
+   *     ]
+   *     successes: {
+   *       reading (optional): number
+   *       listening (optional): number
+   *       translating (optional): number
+   *     }
+   *     last_attempts: {
+   *       reading (optional): number
+   *       listening (optional): number
+   *       translating (optional): number
+   *     }
+   *   }
+   * ]
+   */
   app.get('/api/cards', (req, res) => {
     db.listCards((cards) => {
       res.json({cards: cards});

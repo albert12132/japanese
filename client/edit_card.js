@@ -50,12 +50,15 @@ export default class EditCardModal extends React.Component {
         saveFailed: true,
       });
     } else {
+      console.log(this.state.tags);
       this.props.saveCard({
         card_id: this.state.card_id,
         kanji: this.state.kanji,
         hiragana: this.state.hiragana,
         meaning: this.state.meaning,
-        tags: this.state.tags.map((select) => select.value),
+        tags: this.state.tags,
+        successes: this.props.initialCard.successes,
+        last_attempts: this.props.initialCard.last_attempts,
       });
       this.close();
     }
@@ -147,7 +150,7 @@ export default class EditCardModal extends React.Component {
                   })}
                   onChange={(newTags) => {
                     this.setState({
-                      tags: newTags,
+                      tags: newTags.map(select => select.value),
                     });
                   }}
                 />
@@ -169,9 +172,6 @@ export default class EditCardModal extends React.Component {
             </Row>
           </Form>
         </ModalBody>
-
-        <ModalFooter>
-        </ModalFooter>
       </Modal>
     );
   }

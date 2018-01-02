@@ -13,8 +13,9 @@ import {
   Container,
   Row,
 } from 'reactstrap';
-import CreateCard from './create_card.js';
-import Header from './header.js';
+
+import QUIZ_TYPES from './quiz_types.js';
+import { needsReview } from './utils.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -24,6 +25,8 @@ class App extends React.Component {
       cards: new OrderedMap(),
       tags: new Set(),
       quizEnabled: false,
+
+      quizType: QUIZ_TYPES[0].value,
       tagsToFilter: new Set(),
     }
     this.client = new AppClient();
@@ -32,13 +35,12 @@ class App extends React.Component {
     this.updateCard = this.updateCard.bind(this);
     this.deleteCard = this.deleteCard.bind(this);
     this.toggleQuizEnabled = this.toggleQuizEnabled.bind(this);
-    this.updateTagFilter = this.updateTagFilter.bind(this);
+    this.getFilteredCards = this.getFilteredCards.bind(this);
+    this.updateQuizType = this.updateQuizType.bind(this);
+    this.updateTagsToFilter = this.updateTagsToFilter.bind(this);
 
     this.client.loadCards((cards) => {
-      const cardMap = new OrderedMap(cards).map(card => {
-        card.successes = undefined;
-        return card;
-      });
+      const cardMap = new OrderedMap(cards);
       this.setState({
         verified: true,
         cards: cardMap,
@@ -90,59 +92,56 @@ class App extends React.Component {
     });
   }
 
-  updateTagFilter(newTags) {
+  updateQuizType(quizType) {
+    this.setState({
+      quizType: quizType,
+    });
+  }
+
+  updateTagsToFilter(newTags) {
     this.setState({
       tagsToFilter: newTags,
     });
   }
 
   getFilteredCards() {
-    let filtered;
-    if (this.state.tagsToFilter.isEmpty()) {
-      filtered = this.state.cards;
-    } else {
-      filtered = this.state.cards.filter(card => {
-        return !this.state.tagsToFilter.intersect(card.tags).isEmpty();
-      });
-    }
-    return filtered.toList().sortBy(Math.random);
+    return this.state.cards.filter((card) => {
+      return this.state.tagsToFilter.isEmpty() || !this.state.tagsToFilter.intersect(card.tags).isEmpty();
+    });
+  }
+
+  getQuizCards() {
+    return this.getFilteredCards().toList().filter((card) => {
+      return needsReview(card, this.state.quizType);
+    }).sortBy(Math.random);
   }
 
   render() {
-    const header = (
-      <Header
-        toggleQuizEnabled={this.toggleQuizEnabled}
-        quizEnabled={this.state.quizEnabled}
-        addNewCard={this.addNewCard}
-        tags={this.state.tags}
-        tagsToFilter={this.state.tagsToFilter}
-        updateTagFilter={this.updateTagFilter}
-      />
-    );
-
-    let body;
     if (this.state.quizEnabled) {
-      body = (
+      return (
         <Quiz
-          cards={this.getFilteredCards()}
+          onStopQuiz={this.toggleQuizEnabled}
+          updateCard={this.updateCard}
+          cards={this.getQuizCards()}
+          quizType={this.state.quizType}
         />
       );
     } else {
-      body = (
+      return (
         <Review
+          onStartQuiz={this.toggleQuizEnabled}
+          addNewCard={this.addNewCard}
           updateCard={this.updateCard}
           deleteCard={this.deleteCard}
           cards={this.getFilteredCards()}
           tags={this.state.tags}
+          tagsToFilter={this.state.tagsToFilter}
+          updateTagsToFilter={this.updateTagsToFilter}
+          updateQuizType={this.updateQuizType}
+          quizType={this.state.quizType}
         />
       );
     }
-    return (
-      <div>
-        {header}
-        {body}
-      </div>
-    );
   }
 }
 
