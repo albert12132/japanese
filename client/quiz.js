@@ -22,9 +22,12 @@ export default class Quiz extends React.Component {
     this.state = {
       cardIndex: 0,
       card: this.props.cards.get(0),
+      updatedCards: new Set(),
     };
 
     this.setNextCard = this.setNextCard.bind(this);
+    this.stopQuiz = this.stopQuiz.bind(this);
+    this.addUpdatedCard = this.addUpdatedCard.bind(this);
   }
 
   nextCard(index) {
@@ -47,6 +50,21 @@ export default class Quiz extends React.Component {
     });
   }
 
+  stopQuiz() {
+    this.props.onStopQuiz();
+    for (let card of this.state.updatedCards.toArray()) {
+      this.props.updateCard(card);
+    }
+  }
+
+  addUpdatedCard(card) {
+    this.setState((prevState) => {
+      return {
+        updatedCards: prevState.updatedCards.add(card),
+      };
+    });
+  }
+
   render() {
     let quiz;
     switch (this.props.quizType) {
@@ -56,7 +74,7 @@ export default class Quiz extends React.Component {
             card={this.state.card}
             nextCard={this.setNextCard}
             quizType={this.props.quizType}
-            updateCard={this.props.updateCard}
+            updateCard={this.addUpdatedCard}
           />
         );
         break;
@@ -66,7 +84,7 @@ export default class Quiz extends React.Component {
             card={this.state.card}
             nextCard={this.setNextCard}
             quizType={this.props.quizType}
-            updateCard={this.props.updateCard}
+            updateCard={this.addUpdatedCard}
           />
         );
         break;
@@ -76,7 +94,7 @@ export default class Quiz extends React.Component {
             card={this.state.card}
             nextCard={this.setNextCard}
             quizType={this.props.quizType}
-            updateCard={this.props.updateCard}
+            updateCard={this.addUpdatedCard}
           />
         );
         break;
@@ -84,7 +102,7 @@ export default class Quiz extends React.Component {
     return (
       <div>
         <QuizHeader
-          stopQuiz={this.props.onStopQuiz}
+          stopQuiz={this.stopQuiz}
         />
         <Container>
           {quiz}
