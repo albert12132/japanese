@@ -20,7 +20,7 @@ export default function ReviewHeader(props) {
     <div className='app-header large-section'>
       <Container>
         <Row className='justify-content-center align-items-center'>
-          <Col md='4'>
+          <Col xs='6' md='4'>
             <Button
               className='green'
               size='lg'
@@ -29,7 +29,7 @@ export default function ReviewHeader(props) {
               Start quiz
             </Button>
           </Col>
-          <Col xs='5' md='4'>
+          <Col xs='6' md='4'>
             <CreateCard
               addNewCard={props.addNewCard}
               tags={props.tags}

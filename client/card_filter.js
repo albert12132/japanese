@@ -31,12 +31,12 @@ export default class CardFilter extends React.Component {
 
         <FormGroup className='align-items-center'>
           <InputGroup className='justify-content-center'>
-            <Col md='2'>
+            <Col xs='3' md='2'>
               Any tags in
             </Col>
             {' '}
 
-            <Col md='9'>
+            <Col xs='9' md='9'>
               <Select
                 multi={true}
                 value={this.props.tagsToFilter.toArray()}
@@ -58,12 +58,12 @@ export default class CardFilter extends React.Component {
 
         <FormGroup className='align-items-center'>
           <InputGroup className='justify-content-center'>
-            <Col md='2'>
+            <Col xs='3' md='2'>
               Quiz type
             </Col>
             {' '}
 
-            <Col md='9'>
+            <Col xs='9' md='9'>
               <Select
                 clearable={false}
                 value={this.props.quizType}

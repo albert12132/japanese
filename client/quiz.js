@@ -288,8 +288,9 @@ class QuizTemplate extends React.Component {
       return (
           <FormGroup key={field}>
             <InputGroup>
-              <Label md='2' className={color}>{field}</Label>
+              <Label xs='3' md='2' className={color}>{field}</Label>
               <Input
+                xs='9'
                 md='10'
                 autoFocus={i === 0}
                 value={this.state[field]}

@@ -20,7 +20,7 @@ export default function QuizHeader(props) {
     <div className='app-header large-section'>
       <Container>
         <Row className='justify-content-center align-items-center'>
-          <Col xs='5' md='6'>
+          <Col xs='6' md='6'>
             <Button
               className='red'
               size='lg'
