@@ -31,6 +31,7 @@
     "popper.js": "^1.12.5",
     "pug": "^2.0.0-rc.4",
     "react": "^16.0.0",
+    "react-bootstrap": "^0.32.0",
     "react-dom": "^16.0.0",
     "react-select": "^1.0.0-rc.10",
     "reactstrap": "^5.0.0-alpha.3",

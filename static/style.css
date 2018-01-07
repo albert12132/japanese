@@ -35,8 +35,9 @@ button.red:hover {
   color: white;
 }
 
-input.red {
+input.red, input.red:focus {
   border-color: #f45532;
+  background-color:#feefec;
 }
 
 label.red {
@@ -110,4 +111,13 @@ input.form-control:focus {
 
 .edit-card-input-kanji {
   font-size:3em;
+}
+
+.progress-bar {
+  background-color: #21ce99;
+  height: 1.5em;
+}
+
+.progress-bar-text {
+  text-align: center;
 }

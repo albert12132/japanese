@@ -15,6 +15,9 @@ import {
   Row,
 } from 'reactstrap';
 import QuizHeader from './quiz_header.js';
+import {
+  ProgressBar,
+} from 'react-bootstrap';
 
 export default class Quiz extends React.Component {
   constructor(props) {
@@ -106,6 +109,22 @@ export default class Quiz extends React.Component {
         />
         <Container>
           {quiz}
+
+          <div className='large-section'>
+            <Row className='justify-content-center'>
+              <Col md='6'>
+                <ProgressBar
+                  now={this.state.cardIndex + 1}
+                  max={this.props.cards.size} />
+              </Col>
+            </Row>
+            <Row className='justify-content-center'>
+              <Col md='6' className='progress-bar-text'>
+                {(this.state.cardIndex + 1) + ' out of ' + this.props.cards.size}
+              </Col>
+            </Row>
+          </div>
+
         </Container>
       </div>
     );
