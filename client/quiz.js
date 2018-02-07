@@ -120,7 +120,7 @@ export default class Quiz extends React.Component {
             </Row>
             <Row className='justify-content-center'>
               <Col md='6' className='progress-bar-text'>
-                {(this.state.cardIndex + 1) + ' out of ' + this.props.cards.size}
+                {(this.state.cardIndex) + ' out of ' + this.props.cards.size}
               </Col>
             </Row>
           </div>
