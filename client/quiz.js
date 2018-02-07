@@ -114,7 +114,7 @@ export default class Quiz extends React.Component {
             <Row className='justify-content-center'>
               <Col md='6'>
                 <ProgressBar
-                  now={this.state.cardIndex + 1}
+                  now={this.state.cardIndex}
                   max={this.props.cards.size} />
               </Col>
             </Row>
