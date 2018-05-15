@@ -5,8 +5,10 @@ const MASTERED = 5;
 const SUPER_MASTERED = 10;
 
 export function isMastered(card, quizType) {
-  return card.successes && card.successes[quizType]
-    && card.successes[quizType] > MASTERED
+  if (card.successes && card.successes[quizType] && card.successes[quizType] > MASTERED) {
+    return true;
+  }
+  return false;
 }
 
 export function needsReview(card, quizType) {
@@ -15,7 +17,7 @@ export function needsReview(card, quizType) {
   }
 
   const successes = card.successes[quizType];
-  const lastQuizAttemptMillis = card.last_attempts && card.last_attempts[quizType] ? card.last_attempts[quizType] : 0;
+  const lastQuizAttemptMillis = card.lastAttempts && card.lastAttempts[quizType] ? card.lastAttempts[quizType] : 0;
   const millisSinceLastAttempt = new Date() - lastQuizAttemptMillis;
 
   if (successes <= SUPER_MASTERED && millisSinceLastAttempt > DAY_IN_MILLIS) {
@@ -31,4 +33,10 @@ export function successes(card, quizType) {
     return card.successes[quizType];
   }
   return 0;
+}
+
+export function filterCards(cards, filteredTags) {
+  return cards.filter(value => {
+    return filteredTags.isEmpty() || !filteredTags.intersect(value.get('tags')).isEmpty();
+  });
 }

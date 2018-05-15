@@ -12,7 +12,6 @@ import {
   Input,
   Row,
 } from 'reactstrap';
-import AppClient from './client.js';
 
 export default class LoginPage extends React.Component {
   constructor(props) {
@@ -21,8 +20,6 @@ export default class LoginPage extends React.Component {
       phrase: '',
       verificationFailed: false,
     };
-
-    this.client = new AppClient();
 
     this.onLoginSubmit = this.onLoginSubmit.bind(this);
     this.onLoginSuccess = this.onLoginSuccess.bind(this);

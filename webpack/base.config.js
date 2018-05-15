@@ -10,23 +10,6 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, 'static')
   },
-  devServer: {
-    contentBase: './static/',
-    proxy: {
-      '/': {
-        target: 'http://localhost:3000',
-        secure: false
-      },
-      '/auth': {
-        target: 'http://localhost:3000',
-        secure: false
-      },
-      '/api': {
-        target: 'http://localhost:3000',
-        secure: false
-      }
-    }
-  },
   module: {
     rules: [
       {
