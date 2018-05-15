@@ -15,7 +15,7 @@
     }
   },
   tags: [ string ]
-  lastUpdated: number
+  lastRefreshed: number
 
   // UI state
   quizEnabled: boolean

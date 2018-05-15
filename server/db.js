@@ -1,6 +1,8 @@
 const uuid = require('uuid/v4');
 const { Pool } = require('pg');
 
+const PAGE_SIZE = 100;
+
 class PostGresDatabase {
   constructor() {
     if (process.env.DATABASE_URL) {
@@ -112,7 +114,7 @@ class PostGresDatabase {
         query = 'select * from Cards'
           + ' where last_modified > $2 or (card_id > $1 and last_modified = $2)'
           + ' order by last_modified, card_id'
-          + ' limit 100';
+          + ` limit ${PAGE_SIZE}`;
         values = [this._getIdFromToken(token), this._getLastModifiedFromToken(token)];
       } else {
         values = [];
@@ -122,7 +124,7 @@ class PostGresDatabase {
           values.push(modifiedAfter);
         }
         query += ' order by last_modified, card_id'
-          + ' limit 100';
+          + ` limit ${PAGE_SIZE}`;
       }
 
       client.query(
@@ -134,7 +136,12 @@ class PostGresDatabase {
             failure(err);
           } else {
             let cards = [];
-            let nextToken = this._getToken(res.rows[res.rows.length - 1]);
+            let nextToken;
+            if (res.rows.length < PAGE_SIZE) {
+              nextToken = null;
+            } else {
+              nextToken = this._getToken(res.rows[res.rows.length - 1]);
+            }
 
             // During migration, data may or may not be populated. Convert both cases into the same
             // result.

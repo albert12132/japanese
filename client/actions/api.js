@@ -18,7 +18,7 @@ export function loadCards(lastUpdated) {
     dispatch(_requestCards(Date.now()));
     let endpoint = '/api/cards'
     if (lastUpdated) {
-      endpoint += `?modifiedAfter=${lastUpdated}`;
+      endpoint += `?modified_after=${lastUpdated}`;
     }
     _listCardsRecursive(endpoint, dispatch);
   };
