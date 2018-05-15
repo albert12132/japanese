@@ -126,19 +126,21 @@ export default class Quiz extends React.Component {
 
     return (
       <div>
-        <Container>
-          <Row className='justify-content-center align-items-center'>
-            <Col xs='6' md='6'>
-              <Button
-                className='red'
-                size='lg'
-                block
-                onClick={() => this.props.stopQuiz(this.state.updates)} >
-                Stop quiz
-              </Button>
-            </Col>
-          </Row>
-        </Container>
+        <div className='large-section app-header'>
+          <Container>
+            <Row className='justify-content-center align-items-center'>
+              <Col xs='6' md='6'>
+                <Button
+                  className='red'
+                  size='lg'
+                  block
+                  onClick={() => this.props.stopQuiz(this.state.updates)} >
+                  Stop quiz
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </div>
 
         <Container>
           {quiz}

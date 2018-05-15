@@ -104,6 +104,10 @@ input.form-control:focus {
   border-color: #21ce99;
 }
 
+input.form-control[readonly] {
+  background-color: white;
+}
+
 
 .edit-card-input {
   text-align:center;

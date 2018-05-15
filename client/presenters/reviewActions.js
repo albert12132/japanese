@@ -14,7 +14,7 @@ import {
 
 let ReviewActions = ({ dispatch }) => {
   return (
-    <div className='large-section'>
+    <div className='large-section app-header'>
       <Container>
         <Row className='justify-content-center align-items-center'>
           <Col xs='6' md='4'>
