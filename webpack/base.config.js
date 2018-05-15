@@ -7,8 +7,8 @@ module.exports = {
     login: './client/login.js',
   },
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'static')
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, '..', 'static')
   },
   module: {
     rules: [

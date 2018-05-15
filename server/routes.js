@@ -12,9 +12,9 @@ module.exports.addRoutes = (app, db) => {
     '/',
     (req, res) => {
       if (!isAuthorized(req.session.token)) {
-        res.render('page', { script: 'login.js' });
+        res.render('page', { script: 'login.bundle.js' });
       } else {
-        res.render('page', { script: 'app.js' });
+        res.render('page', { script: 'app.bundle.js' });
       }
     });
 
