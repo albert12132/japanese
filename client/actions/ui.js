@@ -36,3 +36,11 @@ export function setFilteredTags(filteredTags) {
     filteredTags,
   };
 }
+
+export const NOTIFY_CONNECTION = 'NOTIFY_CONNECTION';
+export function notifyConnection(isOnline) {
+  return {
+    type: NOTIFY_CONNECTION,
+    isOnline,
+  };
+}

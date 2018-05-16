@@ -16,6 +16,16 @@ nav.green .navbar-brand, nav.green .navbar-brand:hover {
   color: white;
 }
 
+nav.grey {
+  border-color: #f45532;
+  background-color: #f45532;
+  color: white;
+}
+
+nav.grey .navbar-brand, nav.grey .navbar-brand:hover {
+  color: white;
+}
+
 button.green:hover {
   border-color: #1ebd8c;
   background-color: #1ebd8c;

@@ -24,5 +24,7 @@
 
   showModal: boolean
   modalCardId: string
+
+  isOnline: boolean
 }
 ```

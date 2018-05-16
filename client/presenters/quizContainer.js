@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { fromJS, Map } from 'immutable';
+import { createSelector } from 'reselect';
 import Quiz from './quiz.js';
 import {
   toggleQuiz,
@@ -9,7 +10,10 @@ import {
 } from '../actions/api.js';
 import { needsReview, filterCards } from '../utils.js';
 
-function getShuffledCards(filteredCardMap, quizType) {
+const getShuffledCards = createSelector(
+  [state => state.get('cards'), state => state.get('filteredTags'), state => state.get('quizType')],
+  (cardMap, filteredTags, quizType) => {
+  const filteredCardMap = filterCards(cardMap, filteredTags);
   return filteredCardMap
     .entrySeq()
     .map(entry => {
@@ -25,13 +29,11 @@ function getShuffledCards(filteredCardMap, quizType) {
     .sortBy(Math.random)
     .toJS();
 }
+)
 
 const mapStateToProps = state => {
-  const cards = getShuffledCards(
-    filterCards(state.get('cards'), state.get('filteredTags')),
-    state.get('quizType'));
   return {
-    cards: cards,
+    cards: getShuffledCards(state),
     quizType: state.get('quizType'),
   };
 };

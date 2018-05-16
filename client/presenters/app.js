@@ -5,15 +5,20 @@ import CardListContainer from './cardListContainer.js';
 import ReviewActions from './reviewActions.js';
 import QuizContainer from './quizContainer.js';
 import FiltersContainer from './filtersContainer.js';
+import Header from './header.js';
 
 let App = (props) => {
   if (props.quizEnabled) {
     return (
-      <QuizContainer />
+      <div>
+        <Header/>
+        <QuizContainer />
+      </div>
     );
   } else {
     return (
       <div>
+        <Header/>
         <ReviewActions/>
         <FiltersContainer/>
         <CardListContainer/>
