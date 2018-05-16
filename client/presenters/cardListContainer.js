@@ -23,6 +23,7 @@ const mapStateToProps = state => {
     cards: getCardList(
       filterCards(state.get('cards'), state.get('filteredTags')), state.get('quizType')),
     quizType: state.get('quizType'),
+    lastRefreshed: state.get('lastRefreshed'),
   };
 };
 

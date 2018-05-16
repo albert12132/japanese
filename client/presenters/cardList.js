@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Badge,
   Col,
   Container,
   Row,
@@ -44,10 +45,14 @@ class CardList extends React.Component {
           />
         );
       });
+    const refreshed = new Date(this.props.lastRefreshed);
     return (
       <Container>
         <Row>
-          {totalSize} cards
+          {totalSize} cards.
+          Last refreshed:{' '}
+          {`${refreshed.getMonth()}/${refreshed.getDate()} @ `}
+          {`${refreshed.getHours()}:${refreshed.getMinutes()}`}
         </Row>
         <Row>
           {rows}

@@ -22,7 +22,9 @@ export function needsReview(card, quizType) {
 
   if (successes <= SUPER_MASTERED && millisSinceLastAttempt > DAY_IN_MILLIS) {
     return true;
-  } else if (successes > SUPER_MASTERED && millisSinceLastAttempt > WEEK_IN_MILLIS) {
+  }
+  const threshold = (Math.log2(successes) - 2) * WEEK_IN_MILLIS;
+  if (successes > SUPER_MASTERED && millisSinceLastAttempt > threshold) {
     return true;
   }
   return false;
