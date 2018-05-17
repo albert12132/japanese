@@ -51,7 +51,7 @@ function _listCardsRecursive(endpoint, dispatch) {
 // Create card
 export function createCard(card) {
   return dispatch => {
-    $.ajax(
+    return $.ajax(
       {
         method: "post",
         url: '/api/cards',
@@ -76,7 +76,7 @@ export function updateCards(cards) {
       })
       .toJS();
 
-    $.ajax(
+    return $.ajax(
       {
         method: "put",
         url: '/api/cards',
@@ -94,7 +94,7 @@ export function updateCards(cards) {
 // Delete card
 export function deleteCard(cardId) {
   return dispatch => {
-    $.ajax(
+    return $.ajax(
       {
         method: "delete",
         url: `/api/cards/${cardId}`,

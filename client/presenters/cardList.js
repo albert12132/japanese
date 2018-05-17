@@ -49,11 +49,20 @@ class CardList extends React.Component {
     return (
       <Container>
         <Row>
-          {totalSize} cards.
-          Last refreshed:{' '}
-          {`${refreshed.getMonth()}/${refreshed.getDate()} @ `}
-          {`${refreshed.getHours()}:${refreshed.getMinutes()}`}
+          <h5>
+            {totalSize} cards
+            {' '}
+            <Badge color='danger'>
+              {this.props.showSavingAlert ? ' Saving...' : null }
+            </Badge>
+          </h5>
         </Row>
+        <Row>
+          Last refreshed:{' '}
+          {`${refreshed.getMonth() + 1}/${refreshed.getDate()} @ `}
+          {`${refreshed.getHours()}:` + `${refreshed.getMinutes()}`.padStart(2, '0')}
+        </Row>
+        <hr/>
         <Row>
           {rows}
         </Row>
@@ -71,6 +80,7 @@ CardList.propTypes = {
   ).isRequired,
   quizType: PropTypes.string.isRequired,
   onCardClick: PropTypes.func.isRequired,
+  showSavingAlert: PropTypes.bool.isRequired,
 };
 
 export default CardList;

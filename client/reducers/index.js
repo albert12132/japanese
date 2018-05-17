@@ -8,6 +8,7 @@ import quizEnabled from './quizEnabled.js';
 import quizType from './quizType.js';
 import showModal from './showModal.js';
 import tags from './tags.js';
+import showSavingAlert from './showSavingAlert.js';
 
 const rootReducer = combineReducers({
   cards,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   quizType,
   showModal,
   tags,
+  showSavingAlert,
 });
 
 export default rootReducer;

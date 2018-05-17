@@ -44,3 +44,11 @@ export function notifyConnection(isOnline) {
     isOnline,
   };
 }
+
+export const TOGGLE_SAVING_ALERT = 'TOGGLE_SAVING_ALERT';
+export function toggleSavingAlert(show) {
+  return {
+    type: TOGGLE_SAVING_ALERT,
+    show,
+  };
+}

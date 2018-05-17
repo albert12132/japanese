@@ -21,8 +21,9 @@ setInterval(
   () => {
     const state = store.getState();
     const quizEnabled = state.get('quizEnabled');
+    const showModal = state.get('showModal');
     const lastRefreshed = state.get('lastRefreshed');
-    if (!quizEnabled && Date.now() - lastRefreshed > REFRESH_BUFFER_MS) {
+    if (!showModal && !quizEnabled && Date.now() - lastRefreshed > REFRESH_BUFFER_MS) {
       console.log('checking for updates');
       store.dispatch(loadCards(lastRefreshed));
     }

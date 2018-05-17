@@ -28,6 +28,7 @@ const mapStateToProps = state => {
     cards: getCardList(state),
     quizType: state.get('quizType'),
     lastRefreshed: state.get('lastRefreshed'),
+    showSavingAlert: state.get('showSavingAlert'),
   };
 };
 

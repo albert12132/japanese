@@ -1,3 +1,4 @@
 node_modules/
 static/*bundle.js
 *.log
+test_env.sh

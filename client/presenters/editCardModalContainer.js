@@ -6,6 +6,9 @@ import {
   updateCards,
   deleteCard,
 } from '../actions/api.js';
+import {
+  toggleSavingAlert
+} from '../actions/ui.js';
 import { hideModal } from '../actions/ui.js';
 
 
@@ -29,18 +32,25 @@ const mapDispatchToProps = dispatch => {
   return {
     onSave: (card, cardId) => {
       card = fromJS(card);
+      dispatch(toggleSavingAlert(true))
+
+      let promise;
       if (cardId) {
         const map = Map().set(cardId, card);
-        dispatch(updateCards(map));
+        promise = dispatch(updateCards(map));
       } else {
-        dispatch(createCard(card));
+        promise = dispatch(createCard(card));
       }
+
+      promise.then(() => dispatch(toggleSavingAlert(false)));
     },
     onClose: () => {
       dispatch(hideModal());
     },
     onDelete: cardId => {
-      dispatch(deleteCard(cardId));
+      dispatch(toggleSavingAlert(true));
+      dispatch(deleteCard(cardId))
+        .then(() => dispatch(toggleSavingAlert(false)));
     },
   };
 };

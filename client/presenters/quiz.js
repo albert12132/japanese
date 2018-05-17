@@ -103,7 +103,15 @@ export default class Quiz extends React.Component {
     }
 
     let quiz;
-    if (!this.state.disableGuess) {
+    if (this.props.cards.length <= this.state.cardIndex) {
+      quiz = (
+        <Row className='justify-content-center'>
+          <div>
+            <h1>Done!</h1>
+          </div>
+        </Row>
+      );
+    } else if (!this.state.disableGuess) {
       quiz = (
           <QuizTemplate
             promptField={promptField}
