@@ -58,13 +58,13 @@ export default class Quiz extends React.Component {
     const newRecord = Object.assign({}, record);
     newRecord.card.successes = Object.assign(
       {},
-      newRecord.successes,
+      newRecord.card.successes,
       {
         [this.props.quizType]: 0,
       });
     newRecord.card.lastAttempts = Object.assign(
       {},
-      newRecord.lastAttempts,
+      newRecord.card.lastAttempts,
       {
         [this.props.quizType]: Date.now(),
       });
