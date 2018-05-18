@@ -20,10 +20,11 @@ const REFRESH_BUFFER_MS = 300000; // 5 minutes
 setInterval(
   () => {
     const state = store.getState();
+    const isOnline = state.get('isOnline');
     const quizEnabled = state.get('quizEnabled');
     const showModal = state.get('showModal');
     const lastRefreshed = state.get('lastRefreshed');
-    if (!showModal && !quizEnabled && Date.now() - lastRefreshed > REFRESH_BUFFER_MS) {
+    if (isOnline && !showModal && !quizEnabled && Date.now() - lastRefreshed > REFRESH_BUFFER_MS) {
       console.log('checking for updates');
       store.dispatch(loadCards(lastRefreshed));
     }
