@@ -16,6 +16,7 @@
   },
   tags: [ string ]
   lastRefreshed: number
+  isRefreshing: boolean
 
   // UI state
   quizEnabled: boolean

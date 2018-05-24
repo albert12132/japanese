@@ -2,6 +2,7 @@ import { combineReducers } from 'redux-immutable';
 import cards from './cards.js';
 import filteredTags from './filteredTags.js';
 import isOnline from './isOnline.js';
+import isRefreshing from './isRefreshing.js';
 import lastRefreshed from './lastRefreshed.js';
 import modalCardId from './modalCardId.js';
 import quizEnabled from './quizEnabled.js';
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   cards,
   filteredTags,
   isOnline,
+  isRefreshing,
   lastRefreshed,
   modalCardId,
   quizEnabled,

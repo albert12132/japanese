@@ -2,7 +2,7 @@ import $ from 'jquery';
 import {
   _requestCards,
   _receiveCardPage,
-  _receivedAllCards,
+  _finishLoading,
   _createCard,
   _updateCards,
   _deleteCard,
@@ -15,7 +15,7 @@ const JSON_MIME = 'application/json';
 
 export function loadCards(lastUpdated) {
   return dispatch => {
-    dispatch(_requestCards(Date.now()));
+    dispatch(_requestCards());
     let endpoint = '/api/cards'
     if (lastUpdated) {
       endpoint += `?modified_after=${lastUpdated}`;
@@ -44,6 +44,8 @@ function _listCardsRecursive(endpoint, dispatch) {
 
       if (response.token) {
         _listCardsRecursive(response.token, dispatch);
+      } else {
+        dispatch(_finishLoading(Date.now()));
       }
     });
 }

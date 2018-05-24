@@ -29,6 +29,7 @@ const mapStateToProps = state => {
     quizType: state.get('quizType'),
     lastRefreshed: state.get('lastRefreshed'),
     showSavingAlert: state.get('showSavingAlert'),
+    showRefreshingAlert: state.get('isRefreshing'),
   };
 };
 

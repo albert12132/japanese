@@ -1,9 +1,8 @@
 
 export const REQUEST_CARDS = 'REQUEST_CARDS';
-export function _requestCards(nowTimestamp) {
+export function _requestCards() {
   return {
     type: REQUEST_CARDS,
-    nowTimestamp,
   };
 }
 
@@ -13,6 +12,15 @@ export function _receiveCardPage(cards) {
   return {
     type: RECEIVE_CARD_PAGE,
     cards
+  }
+}
+
+export const FINISH_LOADING = 'FINISH_LOADING';
+// cards: Map of cardId -> card
+export function _finishLoading(nowTimestamp) {
+  return {
+    type: FINISH_LOADING,
+    nowTimestamp,
   }
 }
 

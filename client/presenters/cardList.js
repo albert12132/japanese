@@ -58,9 +58,15 @@ class CardList extends React.Component {
           </h5>
         </Row>
         <Row>
-          Last refreshed:{' '}
-          {`${refreshed.getMonth() + 1}/${refreshed.getDate()} @ `}
-          {`${refreshed.getHours()}:` + `${refreshed.getMinutes()}`.padStart(2, '0')}
+          <h6>
+            Last refreshed:{' '}
+            {`${refreshed.getMonth() + 1}/${refreshed.getDate()} @ `}
+            {`${refreshed.getHours()}:` + `${refreshed.getMinutes()}`.padStart(2, '0')}
+            {' '}
+            <Badge color='danger'>
+              {this.props.showRefreshingAlert ? ' Refreshing...' : null }
+            </Badge>
+          </h6>
         </Row>
         <hr/>
         <Row>
