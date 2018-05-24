@@ -5,7 +5,7 @@ import {
 export default function lastRefreshed(state = 0, action) {
   switch (action.type) {
     case FINISH_LOADING:
-      return action.nowTimestamp;
+      return action.nowTimestamp || state;
     default:
       return state;
   }

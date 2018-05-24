@@ -20,12 +20,16 @@ export function loadCards(lastUpdated) {
     if (lastUpdated) {
       endpoint += `?modified_after=${lastUpdated}`;
     }
-    _listCardsRecursive(endpoint, dispatch);
+    _listCardsRecursive(endpoint, dispatch)
+      .catch(e => {
+        console.log(e);
+        dispatch(_finishedLoading());
+      });
   };
 }
 
 function _listCardsRecursive(endpoint, dispatch) {
-  $.get(endpoint)
+  return $.get(endpoint)
     .done(response => {
       const pageEntries = [];
       for (let record of response.cards) {

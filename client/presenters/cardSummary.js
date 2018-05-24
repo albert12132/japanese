@@ -17,13 +17,13 @@ const CardSummary = props => {
   return (
     <Col>
       <Card className={color}>
-      <button
-        onClick={props.onClick}>
-        <CardBody className='text-nowrap'>
-          <CardTitle>{props.card.kanji}</CardTitle>
-          <CardSubtitle>{props.card.hiragana}</CardSubtitle>
-          <CardText>{props.card.meaning}</CardText>
-        </CardBody>
+        <button
+          onClick={props.onClick}>
+          <CardBody className='text-nowrap'>
+            <CardTitle>{props.card.kanji}</CardTitle>
+            <CardSubtitle>{props.card.hiragana}</CardSubtitle>
+            <CardText>{props.card.meaning}</CardText>
+          </CardBody>
         </button>
       </Card>
     </Col>
