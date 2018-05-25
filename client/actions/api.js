@@ -23,7 +23,7 @@ export function loadCards(lastUpdated) {
     _listCardsRecursive(endpoint, dispatch)
       .catch(e => {
         console.log(e);
-        dispatch(_finishedLoading());
+        dispatch(_finishLoading());
       });
   };
 }
