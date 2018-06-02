@@ -130,6 +130,17 @@ input.form-control[readonly] {
 .progress-bar {
   background-color: #21ce99;
   height: 1.5em;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.progress-bar.mastered-progress-bar {
+  min-width: 5%;
+}
+
+.progress-bar.red {
+  background-color: #f45532;
+  height: 1.5em;
 }
 
 .progress-bar-text {

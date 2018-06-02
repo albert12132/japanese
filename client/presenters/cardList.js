@@ -5,6 +5,9 @@ import {
   Container,
   Row,
 } from 'reactstrap';
+import {
+  ProgressBar,
+} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import CardSummary from './cardSummary.js';
 import cardPropType from '../cardSchema.js';
@@ -46,19 +49,24 @@ class CardList extends React.Component {
         );
       });
     const refreshed = new Date(this.props.lastRefreshed);
+    const masteredCount =
+      this.props.cards.filter(record => isMastered(record.card, this.props.quizType)).length;
+    const unMastered = this.props.cards.length - masteredCount;
     return (
       <Container>
         <Row>
-          <h5>
-            {totalSize} cards
-            {' '}
-            <Badge color='danger'>
-              {this.props.showSavingAlert ? ' Saving...' : null }
-            </Badge>
-          </h5>
+          <Col md='6'>
+            <h5>
+              {totalSize} cards
+              {' '}
+              <Badge color='danger'>
+                {this.props.showSavingAlert ? ' Saving...' : null }
+              </Badge>
+            </h5>
+          </Col>
         </Row>
         <Row>
-          <h6>
+          <Col md='6'>
             Last refreshed:{' '}
             {`${refreshed.getMonth() + 1}/${refreshed.getDate()} @ `}
             {`${refreshed.getHours()}:` + `${refreshed.getMinutes()}`.padStart(2, '0')}
@@ -66,7 +74,26 @@ class CardList extends React.Component {
             <Badge color='danger'>
               {this.props.showRefreshingAlert ? ' Refreshing...' : null }
             </Badge>
-          </h6>
+          </Col>
+        </Row>
+        <hr/>
+        <Row className='justify-content-center'>
+          <Col md='6'>
+            <ProgressBar>
+              <ProgressBar
+                className='mastered-progress-bar'
+                label={masteredCount}
+                now={masteredCount}
+                max={this.props.cards.length}
+                key={1} />
+              <ProgressBar
+                className='red mastered-progress-bar'
+                label={unMastered}
+                now={unMastered}
+                max={this.props.cards.length}
+                key={2} />
+            </ProgressBar>
+          </Col>
         </Row>
         <hr/>
         <Row>
