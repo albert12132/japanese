@@ -143,21 +143,11 @@ class PostGresDatabase {
               nextToken = this._getToken(res.rows[res.rows.length - 1]);
             }
 
-            // During migration, data may or may not be populated. Convert both cases into the same
-            // result.
             for (let row of res.rows) {
-              let newCard = {
+              const newCard = {
                 cardId: row.card_id,
+                card: row.data,
               };
-              if (row.data) {
-                newCard.card = row.data;
-              } else {
-                // TODO: remove this once migration is done.
-                delete row.card_id;
-                delete row.data;
-                delete row.last_modified;
-                newCard.card = row;
-              }
               cards.push(newCard);
             }
             success(cards, nextToken);
