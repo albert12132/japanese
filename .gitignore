@@ -2,3 +2,4 @@ node_modules/
 static/*bundle.js
 *.log
 test_env.sh
+tests/client/__snapshots__/

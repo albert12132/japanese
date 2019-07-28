@@ -1,8 +1,7 @@
 
 const DAY_IN_MILLIS = 86400000;
-const WEEK_IN_MILLIS = 7 * DAY_IN_MILLIS;
-const MASTERED = 5;
-const SUPER_MASTERED = 10;
+const MASTERED = 3;
+const SUPER_MASTERED = 5;
 
 export function isMastered(card, quizType) {
   if (card.successes && card.successes[quizType] && card.successes[quizType] > MASTERED) {
@@ -23,7 +22,7 @@ export function needsReview(card, quizType) {
   if (successes <= SUPER_MASTERED && millisSinceLastAttempt > DAY_IN_MILLIS) {
     return true;
   }
-  const threshold = (Math.log2(successes) - 2) * WEEK_IN_MILLIS;
+  const threshold = (successes - SUPER_MASTERED + 1) * DAY_IN_MILLIS;
   if (successes > SUPER_MASTERED && millisSinceLastAttempt > threshold) {
     return true;
   }
